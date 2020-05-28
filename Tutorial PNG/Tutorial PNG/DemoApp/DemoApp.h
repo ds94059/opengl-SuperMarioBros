@@ -13,6 +13,7 @@ private:
 	double m_CoinRotation;
 	GLuint m_Coin;
 	GLuint m_Background;
+	GLuint m_Mario;
 public:
 	DempApp(void);
 	~DempApp(void);

@@ -20,6 +20,7 @@ void DempApp::Initialize()
 	InitGlutInput::Initialize();
 	m_Coin = TextureApp::GenTexture("Media\\Texture\\coin.png");
 	m_Background = TextureApp::GenTexture("Media\\Texture\\ourmap.png");
+	m_Mario = TextureApp::GenTexture("Media\\Texture\\Mario.png");
 }
 
 void DempApp::Finalize()
@@ -46,19 +47,19 @@ void DempApp::Display(bool auto_redraw)
 	glPopMatrix();
 
 
-	/*glPushMatrix();
-	glTranslated(-0.305,0.1,0);
-	glScaled(0.5,0.5,0);
-	glRotatef(m_CoinRotation,0,1,0);
-	glTranslated(-0.15,0,0);
-	glBindTexture(GL_TEXTURE_2D,m_Coin);
+	glPushMatrix();
+	glTranslated(-0.305,-0.7,0);
+	//glScaled(0.5,0.5,0);
+	//glRotatef(m_CoinRotation,0,1,0);
+	//glTranslated(-0.15,0,0);
+	glBindTexture(GL_TEXTURE_2D,m_Mario);
 	glBegin(GL_QUADS);
-	glTexCoord2d(0,0);glVertex2d(0  ,0);
-	glTexCoord2d(1,0);glVertex2d(0.3,0);
-	glTexCoord2d(1,1);glVertex2d(0.3,0.5);
-	glTexCoord2d(0,1);glVertex2d(0  ,0.5);
+	glTexCoord2d(0.3,0.94);glVertex2d(-0.05,-0.05);
+	glTexCoord2d(0.33,0.94);glVertex2d(0.05,-0.05);
+	glTexCoord2d(0.33,1);glVertex2d(0.05,0.07);
+	glTexCoord2d(0.3,1);glVertex2d(-0.05  ,0.07);
 	glEnd();
-	glPopMatrix();*/
+	glPopMatrix();
 
 
 
