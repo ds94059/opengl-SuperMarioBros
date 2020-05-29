@@ -1,6 +1,11 @@
-#include <windows.h>
+﻿#include <windows.h>
 #include "DemoApp.h"
 #include "TextureApp.h"
+
+#define STAND 0
+#define WALKING 1
+#define JUMPING 2
+#define CROUCH 3
 
 DempApp::DempApp(void) :
 	m_Angle(2),
@@ -20,14 +25,14 @@ void DempApp::Initialize()
 	InitGlutInput::Initialize();
 	m_Coin = TextureApp::GenTexture("Media\\Texture\\coin.png");
 	m_Background = TextureApp::GenTexture("Media\\Texture\\ourmap.png");
-	m_Mario = TextureApp::GenTexture("Media\\Texture\\Mario.png");
+	m_Mario = TextureApp::GenTexture("Media\\Texture\\Mario2.png");
 }
 
 void DempApp::Finalize()
 {
 	glDeleteTextures(1, &m_Coin);
 }
-
+float walkingDistanceX = 0, walkingDistanceY = 0, right = 1, walkingState = 0, state = 0;
 void DempApp::Display(bool auto_redraw)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -47,19 +52,54 @@ void DempApp::Display(bool auto_redraw)
 	glPopMatrix();
 
 
-	glPushMatrix();
-	glTranslated(-0.305,-0.7,0);
-	//glScaled(0.5,0.5,0);
-	//glRotatef(m_CoinRotation,0,1,0);
-	//glTranslated(-0.15,0,0);
-	glBindTexture(GL_TEXTURE_2D,m_Mario);
-	glBegin(GL_QUADS);
-	glTexCoord2d(0.3,0.94);glVertex2d(-0.05,-0.05);
-	glTexCoord2d(0.33,0.94);glVertex2d(0.05,-0.05);
-	glTexCoord2d(0.33,1);glVertex2d(0.05,0.07);
-	glTexCoord2d(0.3,1);glVertex2d(-0.05  ,0.07);
-	glEnd();
-	glPopMatrix();
+	if (right)
+	{
+		if (state == WALKING)
+		{
+			if (walkingState == 0)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.20833333333, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.2447916666666667, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.2447916666666667, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glTexCoord2d(0.20833333333, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+				walkingState = 1;
+			}
+			else if (walkingState == 1)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.25, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.2890625, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.2890625, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glTexCoord2d(0.25, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+				walkingState = 1;
+			}
+		}
+		
+	}
+	else
+	{
+		glPushMatrix();
+		glTranslated(-0.305, -0.7, 0);
+		glBindTexture(GL_TEXTURE_2D, m_Mario);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0.2447916666666667, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+		glTexCoord2d(0.20833333333, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+		glTexCoord2d(0.20833333333, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+		glTexCoord2d(0.2447916666666667, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+		glEnd();
+		glPopMatrix();
+	}
 
 
 
@@ -102,10 +142,14 @@ void DempApp::KeyDown(int key)
 	}
 	else if (key == KEY_RIGHT)
 	{
-		gluLookAt(0.1, 0, 0, 0.1, 0, -1, 0, 1, 0);
+		right = 1;
+		walkingDistanceX += 0.05;
+		//gluLookAt(0.1, 0, 0, 0.1, 0, -1, 0, 1, 0);
 	}
 	else if (key == KEY_LEFT)
 	{
-		gluLookAt(-0.1, 0, 0, -0.1, 0, -1, 0, 1, 0);
+		right = 0;
+		walkingDistanceX -= 0.05;
+		//gluLookAt(-0.1, 0, 0, -0.1, 0, -1, 0, 1, 0);
 	}
 }
