@@ -32,7 +32,7 @@ void DempApp::Finalize()
 {
 	glDeleteTextures(1, &m_Coin);
 }
-float walkingDistanceX = 0, walkingDistanceY = 0, right = 1, walkingState = 0, state = 0;
+float walkingDistanceX = 0, walkingDistanceY = 0, right = 1, walkingState = 0, state = 1;
 void DempApp::Display(bool auto_redraw)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -68,7 +68,6 @@ void DempApp::Display(bool auto_redraw)
 				glTexCoord2d(0.20833333333, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
 				glEnd();
 				glPopMatrix();
-				walkingState = 1;
 			}
 			else if (walkingState == 1)
 			{
@@ -82,7 +81,19 @@ void DempApp::Display(bool auto_redraw)
 				glTexCoord2d(0.25, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
 				glEnd();
 				glPopMatrix();
-				walkingState = 1;
+			}
+			else if (walkingState == 2)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.29167, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.33073, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.33073, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glTexCoord2d(0.29167, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
 			}
 		}
 		
@@ -123,11 +134,19 @@ void DempApp::KeyPress(int key)
 	InitGlutInput::KeyPress(key);
 	if (key == KEY_RIGHT)
 	{
-		gluLookAt(0.1, 0, 0, 0.1, 0, -1, 0, 1, 0);
+		state = WALKING;
+		right = 1;
+		walkingDistanceX += 0.05;
+		walkingState++;
+		if (walkingState == 3)
+			walkingState = 0;
+		//gluLookAt(0.1, 0, 0, 0.1, 0, -1, 0, 1, 0);
 	}
 	else if (key == KEY_LEFT)
 	{
-		gluLookAt(-0.1, 0, 0, -0.1, 0, -1, 0, 1, 0);
+		right = 0;
+		walkingDistanceX -= 0.05;
+		//gluLookAt(-0.1, 0, 0, -0.1, 0, -1, 0, 1, 0);
 	}
 
 }
@@ -142,8 +161,12 @@ void DempApp::KeyDown(int key)
 	}
 	else if (key == KEY_RIGHT)
 	{
+		state = WALKING;
 		right = 1;
 		walkingDistanceX += 0.05;
+		walkingState++;
+		if (walkingState == 3)
+			walkingState = 0;
 		//gluLookAt(0.1, 0, 0, 0.1, 0, -1, 0, 1, 0);
 	}
 	else if (key == KEY_LEFT)
