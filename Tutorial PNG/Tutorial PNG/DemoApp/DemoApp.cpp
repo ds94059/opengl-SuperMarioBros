@@ -75,6 +75,11 @@ void DempApp::Display(bool auto_redraw)
 		gluLookAt((farestPos- (0.222 + screenmiddle)), 0, 0, (farestPos - (0.222 + screenmiddle)), 0, -1, 0, 1, 0);
 		screenmiddle = farestPos - 0.222;
 	}
+	if (walkingDistanceX < -0.648+screenmiddle)
+	{
+		walkingDistanceX = -0.647+screenmiddle;
+		state = STAND;
+	}
 	if (right)
 	{
 		if (state == WALKING)
