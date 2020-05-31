@@ -37,7 +37,7 @@ void DempApp::Finalize()
 }
 
 float walkingDistanceX = 0, walkingDistanceY = 0;
-int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 1;;
+int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 0;
 
 void DempApp::Display(bool auto_redraw)
 {
@@ -57,7 +57,7 @@ void DempApp::Display(bool auto_redraw)
 	glEnd();
 	glPopMatrix();
 
-
+	walkingDistanceX += 0.002*speed;
 	if (right)
 	{
 		if (walkingState < 3)
@@ -67,9 +67,9 @@ void DempApp::Display(bool auto_redraw)
 			glBindTexture(GL_TEXTURE_2D, m_Mario);
 			glBegin(GL_QUADS);
 			glTexCoord2d(0.20833333333, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.2447916666666667, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.2447916666666667, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glTexCoord2d(0.20833333333, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.2447916666666667, 0.91098); glVertex2d(0.05 + walkingDistanceX , -0.05 + walkingDistanceY);
+			glTexCoord2d(0.2447916666666667, 0.9385); glVertex2d(0.05 + walkingDistanceX , 0.1 + walkingDistanceY);
+			glTexCoord2d(0.20833333333, 0.9385); glVertex2d(-0.05 + walkingDistanceX , 0.1 + walkingDistanceY);
 			glEnd();
 			glPopMatrix();
 		}
@@ -79,10 +79,10 @@ void DempApp::Display(bool auto_redraw)
 			glTranslated(-0.305, -0.7, 0);
 			glBindTexture(GL_TEXTURE_2D, m_Mario);
 			glBegin(GL_QUADS);
-			glTexCoord2d(0.25, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.2890625, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.2890625, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glTexCoord2d(0.25, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.25, 0.91098); glVertex2d(-0.05 + walkingDistanceX , -0.05 + walkingDistanceY);
+			glTexCoord2d(0.2890625, 0.91098); glVertex2d(0.05 + walkingDistanceX , -0.05 + walkingDistanceY);
+			glTexCoord2d(0.2890625, 0.9385); glVertex2d(0.05 + walkingDistanceX , 0.1 + walkingDistanceY);
+			glTexCoord2d(0.25, 0.9385); glVertex2d(-0.05 + walkingDistanceX , 0.1 + walkingDistanceY);
 			glEnd();
 			glPopMatrix();
 		}
@@ -92,10 +92,10 @@ void DempApp::Display(bool auto_redraw)
 			glTranslated(-0.305, -0.7, 0);
 			glBindTexture(GL_TEXTURE_2D, m_Mario);
 			glBegin(GL_QUADS);
-			glTexCoord2d(0.29167, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.33073, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.33073, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glTexCoord2d(0.29167, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.29167, 0.91098); glVertex2d(-0.05 + walkingDistanceX , -0.05 + walkingDistanceY);
+			glTexCoord2d(0.33073, 0.91098); glVertex2d(0.05 + walkingDistanceX , -0.05 + walkingDistanceY);
+			glTexCoord2d(0.33073, 0.9385); glVertex2d(0.05 + walkingDistanceX , 0.1 + walkingDistanceY);
+			glTexCoord2d(0.29167, 0.9385); glVertex2d(-0.05 + walkingDistanceX , 0.1 + walkingDistanceY);
 			glEnd();
 			glPopMatrix();
 		}
@@ -108,10 +108,10 @@ void DempApp::Display(bool auto_redraw)
 			glTranslated(-0.305, -0.7, 0);
 			glBindTexture(GL_TEXTURE_2D, m_Mario);
 			glBegin(GL_QUADS);
-			glTexCoord2d(0.2447916666666667, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.20833333333, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.20833333333, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glTexCoord2d(0.2447916666666667, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.2447916666666667, 0.91098); glVertex2d(-0.05 + walkingDistanceX , -0.05 + walkingDistanceY);
+			glTexCoord2d(0.20833333333, 0.91098); glVertex2d(0.05 + walkingDistanceX , -0.05 + walkingDistanceY);
+			glTexCoord2d(0.20833333333, 0.9385); glVertex2d(0.05 + walkingDistanceX , 0.1 + walkingDistanceY);
+			glTexCoord2d(0.2447916666666667, 0.9385); glVertex2d(-0.05 + walkingDistanceX , 0.1 + walkingDistanceY);
 			glEnd();
 			glPopMatrix();
 		}
@@ -121,10 +121,10 @@ void DempApp::Display(bool auto_redraw)
 			glTranslated(-0.305, -0.7, 0);
 			glBindTexture(GL_TEXTURE_2D, m_Mario);
 			glBegin(GL_QUADS);
-			glTexCoord2d(0.2890625, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.25, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.25, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glTexCoord2d(0.2890625, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.2890625, 0.91098); glVertex2d(-0.05 + walkingDistanceX , -0.05 + walkingDistanceY);
+			glTexCoord2d(0.25, 0.91098); glVertex2d(0.05 + walkingDistanceX , -0.05 + walkingDistanceY);
+			glTexCoord2d(0.25, 0.9385); glVertex2d(0.05 + walkingDistanceX , 0.1 + walkingDistanceY);
+			glTexCoord2d(0.2890625, 0.9385); glVertex2d(-0.05 + walkingDistanceX , 0.1 + walkingDistanceY);
 			glEnd();
 			glPopMatrix();
 		}
@@ -134,10 +134,10 @@ void DempApp::Display(bool auto_redraw)
 			glTranslated(-0.305, -0.7, 0);
 			glBindTexture(GL_TEXTURE_2D, m_Mario);
 			glBegin(GL_QUADS);
-			glTexCoord2d(0.33073, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.29167, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.29167, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glTexCoord2d(0.33073, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.33073, 0.91098); glVertex2d(-0.05 + walkingDistanceX , -0.05 + walkingDistanceY);
+			glTexCoord2d(0.29167, 0.91098); glVertex2d(0.05 + walkingDistanceX , -0.05 + walkingDistanceY);
+			glTexCoord2d(0.29167, 0.9385); glVertex2d(0.05 + walkingDistanceX , 0.1 + walkingDistanceY);
+			glTexCoord2d(0.33073, 0.9385); glVertex2d(-0.05 + walkingDistanceX , 0.1 + walkingDistanceY);
 			glEnd();
 			glPopMatrix();
 		}
@@ -193,7 +193,6 @@ void DempApp::KeyDown(int key)
 		right = 0;
 		//gluLookAt(-0.1, 0, 0, -0.1, 0, -1, 0, 1, 0);
 	}
-
 }
 
 void DempApp::KeyUp(int key)
@@ -203,14 +202,14 @@ void DempApp::KeyUp(int key)
 	{
 		RightButtonDown = false;
 		state = STAND;
-		speed = 1;
+		speed = 0;
 		pressTime = 0;
 	}
 	else if (key == KEY_LEFT)
 	{
 		LeftButtonDown = false;
 		state = STAND;
-		speed = 1;
+		speed = 0;
 		pressTime = 0;
 	}
 }
@@ -218,17 +217,19 @@ void DempApp::KeyUp(int key)
 void DempApp::move()
 {
 	pressTime++;
-	if (pressTime % 5==0)
-		speed++;
-	if (speed > 15)
-		speed = 15;
 	if (LeftButtonDown)
 	{
-		walkingDistanceX -= 0.002*speed;
+		if (pressTime % 5 == 0)
+			speed--;
+		if (speed < -15)
+			speed = -15;
 	}
 	else if (RightButtonDown)
 	{
-		walkingDistanceX += 0.002*speed;
+		if (pressTime % 5 == 0)
+			speed++;
+		if (speed > 15)
+			speed = 15;
 	}
 	walkingState++;
 }
