@@ -38,7 +38,7 @@ void DempApp::Finalize()
 	glDeleteTextures(1, &m_Coin);
 }
 
-float walkingDistanceX = 0, walkingDistanceY = 0;
+float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle=0;
 int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 0,timer=0;
 
 void DempApp::Display(bool auto_redraw)
@@ -62,6 +62,19 @@ void DempApp::Display(bool auto_redraw)
 	timer++;
 
 	walkingDistanceX += 0.002*speed;
+	// 
+	if (farestPos < walkingDistanceX)
+	{
+		farestPos = walkingDistanceX;
+	}
+	std::cout << "farest:" << farestPos << std::endl;
+	std::cout << "screenmiddle:" << screenmiddle << std::endl;
+	std::cout << "now:" << walkingDistanceX << std::endl;
+	if (farestPos > (0.222+screenmiddle))
+	{
+		gluLookAt((farestPos- (0.222 + screenmiddle)), 0, 0, (farestPos - (0.222 + screenmiddle)), 0, -1, 0, 1, 0);
+		screenmiddle = farestPos - 0.222;
+	}
 	if (right)
 	{
 		if (state == WALKING)
