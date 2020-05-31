@@ -36,8 +36,9 @@ void DempApp::Finalize()
 	glDeleteTextures(1, &m_Coin);
 }
 
-float walkingDistanceX = 0, walkingDistanceY = 0, right = 1, state = STAND, pressTime = 0;
-int walkingState = 0;
+float walkingDistanceX = 0, walkingDistanceY = 0;
+int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 1;;
+
 void DempApp::Display(bool auto_redraw)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -202,23 +203,32 @@ void DempApp::KeyUp(int key)
 	{
 		RightButtonDown = false;
 		state = STAND;
+		speed = 1;
+		pressTime = 0;
 	}
 	else if (key == KEY_LEFT)
 	{
 		LeftButtonDown = false;
 		state = STAND;
+		speed = 1;
+		pressTime = 0;
 	}
 }
 
 void DempApp::move()
 {
+	pressTime++;
+	if (pressTime % 5==0)
+		speed++;
+	if (speed > 15)
+		speed = 15;
 	if (LeftButtonDown)
 	{
-		walkingDistanceX -= 0.02;
+		walkingDistanceX -= 0.002*speed;
 	}
 	else if (RightButtonDown)
 	{
-		walkingDistanceX += 0.02;
+		walkingDistanceX += 0.002*speed;
 	}
 	walkingState++;
 }
