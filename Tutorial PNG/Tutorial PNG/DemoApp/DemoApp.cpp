@@ -9,6 +9,11 @@
 
 #define MAX_SPEED 10
 
+#define STANDING 0
+#define RISING 1
+#define FALLING 2
+#define FLOATING 3
+
 bool RightButtonDown = false;
 bool LeftButtonDown = false;
 
@@ -39,7 +44,7 @@ void DempApp::Finalize()
 }
 
 float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle=0;
-int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 0,timer=0;
+int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 0,timer=0,inair=0,floattimer=0;
 
 void DempApp::Display(bool auto_redraw)
 {
@@ -70,15 +75,44 @@ void DempApp::Display(bool auto_redraw)
 	std::cout << "farest:" << farestPos << std::endl;
 	std::cout << "screenmiddle:" << screenmiddle << std::endl;
 	std::cout << "now:" << walkingDistanceX << std::endl;
+	std::cout << "height" << walkingDistanceY << std::endl;
+	// 螢幕中心點 起始為0
 	if (farestPos > (0.222+screenmiddle))
 	{
 		gluLookAt((farestPos- (0.222 + screenmiddle)), 0, 0, (farestPos - (0.222 + screenmiddle)), 0, -1, 0, 1, 0);
 		screenmiddle = farestPos - 0.222;
 	}
+	// 螢幕左邊的牆壁 與螢幕中心點相差0.648
 	if (walkingDistanceX < -0.648+screenmiddle)
 	{
 		walkingDistanceX = -0.647+screenmiddle;
 		state = STAND;
+	}
+	if (inair == RISING)
+	{
+		walkingDistanceY += 0.02;
+		if (walkingDistanceY > 0.6)
+		{
+			inair = FLOATING;
+		}
+	}
+	else if (inair == FLOATING)
+	{
+		floattimer++;
+		if (floattimer > 5)
+		{
+			floattimer = 0;
+			inair = FALLING;
+		}
+	}
+	else if (inair == FALLING)
+	{
+		walkingDistanceY -= 0.02;
+		if (walkingDistanceY < 0)
+		{
+			walkingDistanceY = 0;
+			inair = STANDING;
+		}
 	}
 	if (right)
 	{
@@ -297,6 +331,13 @@ void DempApp::KeyDown(int key)
 		LeftButtonDown = true;
 		right = 0;
 		//gluLookAt(-0.1, 0, 0, -0.1, 0, -1, 0, 1, 0);
+	}
+	if (key == KEY_UP)
+	{
+		if (inair == STANDING)
+		{
+			inair = RISING;
+		}
 	}
 }
 
