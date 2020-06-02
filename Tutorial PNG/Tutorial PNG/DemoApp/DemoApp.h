@@ -29,7 +29,10 @@ protected:
 	void KeyUp(int key);
 	void Display(bool auto_redraw = true);
 	void Finalize();
-	void DempApp::move();
+	void move();
+	void renderStand(int dir);
+	void renderWalk(int dir);
+	void renderSlide(int dir);
 private:
 };
 
