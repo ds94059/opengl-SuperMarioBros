@@ -4,7 +4,7 @@ out vec4 FragColor;
 
 void main(void)
 { 
-    float theta = timer*20.0;
+    // float theta = timer*20.0;
       
     vec3 dir1 = vec3(cos(theta),0,sin(theta));
     vec3 dir2 = vec3(sin(theta),0,cos(theta));
