@@ -45,7 +45,7 @@ void DempApp::Finalize()
 }
 
 float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0;
-int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 0, risingSpeed = 2, timer = 0, inair = 0, floattimer = 0;
+int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0;
 
 void DempApp::Display(bool auto_redraw)
 {
@@ -109,9 +109,9 @@ void DempApp::Display(bool auto_redraw)
 		{
 			pressTime++;
 			if (pressTime % 5 == 0)
-				risingSpeed++;
-			if (risingSpeed > 5)
-				risingSpeed = 5;
+				risingSpeed--;
+			if (risingSpeed <= 2)
+				risingSpeed = 2;
 
 			walkingDistanceY += 0.01*risingSpeed;
 		}
@@ -132,12 +132,18 @@ void DempApp::Display(bool auto_redraw)
 	}
 	else if (inair == FALLING)
 	{
-		walkingDistanceY -= 0.02;
+		falltimer++;
+		if (falltimer % 5 == 0)
+			risingSpeed++;
+		if (risingSpeed >= 5)
+			risingSpeed = 5;
+		walkingDistanceY -= 0.01*risingSpeed;
 		if (walkingDistanceY < 0)
 		{
 			walkingDistanceY = 0;
 			inair = STANDING;
-			risingSpeed = 2;
+			risingSpeed = 5;
+			falltimer = 0;
 		}
 	}
 
