@@ -16,6 +16,7 @@ private:
 	GLuint m_Coin;
 	GLuint m_Background;
 	GLuint m_Mario;
+	GLuint m_Start;
 public:
 	DempApp(void);
 	~DempApp(void);
