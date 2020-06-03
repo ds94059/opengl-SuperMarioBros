@@ -6,7 +6,6 @@
 using namespace glm;
 
 
-
 class DempApp : 
 	public InitOpenGLApp,
 	public InitGlutInput
