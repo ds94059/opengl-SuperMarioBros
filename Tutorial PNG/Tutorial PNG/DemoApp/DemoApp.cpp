@@ -1,6 +1,7 @@
 ﻿#include <windows.h>
 #include "DemoApp.h"
 #include "TextureApp.h"
+#include "LoadShaders.h"
 
 #define STAND 0
 #define WALKING 1
@@ -17,6 +18,8 @@
 bool RightButtonDown = false;
 bool LeftButtonDown = false;
 bool UpButtonDown = false;
+
+GLuint program;
 
 DempApp::DempApp(void) :
 	m_Angle(2),
@@ -37,6 +40,14 @@ void DempApp::Initialize()
 	m_Coin = TextureApp::GenTexture("Media\\Texture\\coin.png");
 	m_Background = TextureApp::GenTexture("Media\\Texture\\ourmap.png");
 	m_Mario = TextureApp::GenTexture("Media\\Texture\\Mario2.png");
+
+	ShaderInfo shaders[] = {
+		{ GL_VERTEX_SHADER, "Mario.vs" },//vertex shader
+		{ GL_FRAGMENT_SHADER, "Mario.fs" },//fragment shader
+		{ GL_NONE, NULL } };
+	program = LoadShaders(shaders);//讀取shader
+	glUseProgram(program);//uniform參數數值前必須先use shader
+
 }
 
 void DempApp::Finalize()
@@ -445,6 +456,7 @@ void DempApp::KeyDown(int key)
 	InitGlutInput::KeyDown(key);
 	if (controlAble)
 	{
+
 		if (key == KEY_RIGHT)
 		{
 			state = WALKING;
@@ -482,6 +494,17 @@ void DempApp::KeyUp(int key)
 	{
 		if (key == KEY_RIGHT)
 		{
+<<<<<<< HEAD
+			RightButtonDown = false;
+			state = STAND;
+			//speed = 0;
+			pressTime = 0;
+		}		
+	}
+	if (key == KEY_LEFT)
+	{
+		if (right == 0)
+=======
 			if (right)
 			{
 				RightButtonDown = false;
@@ -491,6 +514,7 @@ void DempApp::KeyUp(int key)
 			}
 		}
 		if (key == KEY_LEFT)
+>>>>>>> 72d9ed27cc74a69f162f4e130aadaa8c02ba51b7
 		{
 			if (right == 0)
 			{
@@ -504,9 +528,20 @@ void DempApp::KeyUp(int key)
 		{
 			UpButtonDown = false;
 			pressTime = 0;
+<<<<<<< HEAD
+		}		
+	}
+	if (key == KEY_UP)
+	{
+		UpButtonDown = false;
+		pressTime = 0;
+		if (inair == RISING)
+			inair = FLOATING;
+=======
 			if (inair == RISING)
 				inair = FLOATING;
 		}
+>>>>>>> 72d9ed27cc74a69f162f4e130aadaa8c02ba51b7
 	}
 }
 
