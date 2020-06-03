@@ -17,6 +17,11 @@ private:
 	GLuint m_Background;
 	GLuint m_Mario;
 	GLuint m_Start;
+	GLuint m_End;
+	GLuint m_3;
+	GLuint m_2;
+	GLuint m_1;
+	GLuint m_X;
 public:
 	DempApp(void);
 	~DempApp(void);
@@ -35,9 +40,8 @@ protected:
 	void renderSlide(int dir);
 	void renderJump(int dir);
 	void renderFlag(int dir);
-	//bool haveGround(float x, float y);
+	bool haveGround(float x, float y);
 private:
 };
-bool haveGround(float x, float y);
 
 

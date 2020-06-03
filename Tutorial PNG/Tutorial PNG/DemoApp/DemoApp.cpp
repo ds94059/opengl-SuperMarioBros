@@ -41,6 +41,11 @@ void DempApp::Initialize()
 	m_Background = TextureApp::GenTexture("Media\\Texture\\ourmap.png");
 	m_Mario = TextureApp::GenTexture("Media\\Texture\\Mario2.png");
 	m_Start = TextureApp::GenTexture("Media\\Texture\\startpage.jpg");
+	m_End = TextureApp::GenTexture("Media\\Texture\\gameover.jpg");
+	m_3 = TextureApp::GenTexture("Media\\Texture\\3.png");
+	m_2 = TextureApp::GenTexture("Media\\Texture\\2.png");
+	m_1 = TextureApp::GenTexture("Media\\Texture\\1.png");
+	m_X = TextureApp::GenTexture("Media\\Texture\\X.png");
 	ShaderInfo shaders[] = {
 		{ GL_VERTEX_SHADER, "Mario.vs" },//vertex shader
 		{ GL_FRAGMENT_SHADER, "Mario.fs" },//fragment shader
@@ -55,14 +60,14 @@ void DempApp::Finalize()
 	glDeleteTextures(1, &m_Coin);
 }
 
-float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight=0;
-int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0,endingstep=0,endtimer=0, startGame=0;
-bool controlAble = 1,//1可控制 0不可
+float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight=0, startrange = 0.7;
+int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0,endingstep=0,endtimer=0, startGame=0,die=0,dietimer=0,starttimer=0,lives=3;
+bool controlAble = 0,//1可控制 0不可
 		endGame=0;
 void DempApp::Display(bool auto_redraw)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(0.02f, 0.3f, 0.55f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -70,6 +75,112 @@ void DempApp::Display(bool auto_redraw)
 	{
 		glPushMatrix();
 		glBindTexture(GL_TEXTURE_2D, m_Start);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0, 0); glVertex2d(-1, -1);
+		glTexCoord2d(1, 0); glVertex2d(1, -1);
+		glTexCoord2d(1, 1); glVertex2d(1, 1);
+		glTexCoord2d(0, 1); glVertex2d(-1, 1);
+		glEnd();
+		glPopMatrix();
+	}
+	else if (startGame == 2)
+	{
+		glPushMatrix();
+		glTranslated(-0.305, -0.7, 0);
+		glBindTexture(GL_TEXTURE_2D, m_Mario);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0.458333, 0.91098); glVertex2d(-0.05, -0.05+startrange);
+		glTexCoord2d(0.497395, 0.91098); glVertex2d(0.05, -0.05 + startrange);
+		glTexCoord2d(0.497395, 0.9385); glVertex2d(0.05, 0.1 + startrange);
+		glTexCoord2d(0.458333, 0.9385); glVertex2d(-0.05,0.1 + startrange);
+		glEnd();
+		glPopMatrix();
+
+		glPushMatrix();
+		glTranslated(-0.305, -0.7, 0);
+		glBindTexture(GL_TEXTURE_2D, m_X);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0, 0); glVertex2d(0.275, 0.675);
+		glTexCoord2d(1, 0); glVertex2d(0.325, 0.675);
+		glTexCoord2d(1, 1); glVertex2d(0.325, 0.775);
+		glTexCoord2d(0, 1); glVertex2d(0.275, 0.775);
+		glEnd();
+		glPopMatrix();
+		switch (lives)
+		{
+		case(3):
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_3);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0, 0); glVertex2d(0.55, 0.65);
+			glTexCoord2d(1, 0); glVertex2d(0.65, 0.65);
+			glTexCoord2d(1, 1); glVertex2d(0.65, 0.8);
+			glTexCoord2d(0, 1); glVertex2d(0.55, 0.8);
+			glEnd();
+			glPopMatrix();
+			break;
+		case(2):
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_2);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0, 0); glVertex2d(0.55, 0.65);
+			glTexCoord2d(1, 0); glVertex2d(0.65, 0.65);
+			glTexCoord2d(1, 1); glVertex2d(0.65, 0.8);
+			glTexCoord2d(0, 1); glVertex2d(0.55, 0.8);
+			glEnd();
+			glPopMatrix();
+			break;
+		case(1):
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_1);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0, 0); glVertex2d(0.55, 0.65);
+			glTexCoord2d(1, 0); glVertex2d(0.65, 0.65);
+			glTexCoord2d(1, 1); glVertex2d(0.65, 0.8);
+			glTexCoord2d(0, 1); glVertex2d(0.55, 0.8);
+			glEnd();
+			glPopMatrix();
+			break;
+		default:
+			break;
+		}
+
+		if (starttimer == 0)
+		{
+			timer = 0;
+			walkingDistanceX = 0;
+			walkingDistanceY = 0;
+			farestPos = 0;
+			jumpGroundHeight = 0;
+			walkingState = 0;
+			right = 1;
+			state = STAND;
+			speed = 0;
+			die = 0;
+			state = STANDING;
+		}
+		starttimer++;
+		
+		if (starttimer > 60)
+		{
+			startrange -= 0.01;
+			if (startrange <= 0)
+			{
+				startrange = 0.7;
+				starttimer = 0;
+				startGame = 1;
+				controlAble = 1;
+			}
+
+		}
+	}
+	else if (startGame == 3)
+	{
+		glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, m_End);
 		glBegin(GL_QUADS);
 		glTexCoord2d(0, 0); glVertex2d(-1, -1);
 		glTexCoord2d(1, 0); glVertex2d(1, -1);
@@ -103,7 +214,27 @@ void DempApp::Display(bool auto_redraw)
 		std::cout << "now:" << walkingDistanceX << std::endl;
 		std::cout << "height" << walkingDistanceY << std::endl;
 		std::cout << "risingSpeed: " << risingSpeed << std::endl;
-		if (endGame == 0)
+		if (die == 1)
+		{
+			if(lives>0)
+			{
+				dietimer++;
+				if (dietimer > 120)
+				{
+					dietimer = 0;
+					startGame = 2;
+					gluLookAt(-screenmiddle, 0, 0, -screenmiddle, 0, -1, 0, 1, 0);
+					screenmiddle = 0;
+				}
+			}
+			else
+			{
+				gluLookAt(-screenmiddle, 0, 0, -screenmiddle, 0, -1, 0, 1, 0);
+				screenmiddle = 0;
+				startGame = 3;
+			}
+		}
+		else if (endGame == 0)
 		{
 			// 螢幕中心點 起始為0
 			if (farestPos > (0.222 + screenmiddle))
@@ -167,6 +298,22 @@ void DempApp::Display(bool auto_redraw)
 			else if (walkingDistanceX > 6.463 && walkingDistanceX < 6.483 && walkingDistanceY < 0)
 			{
 				walkingDistanceX = 6.462;
+				speed = 0;
+				state = STAND;
+			}
+
+			// 第三大地板上的水管 左邊
+			else if (walkingDistanceX > 9.41198 && walkingDistanceX < 9.43198 && walkingDistanceY >= 0 && walkingDistanceY < 0.53)
+			{
+				walkingDistanceX = 9.4119;
+				speed = 0;
+				state = STAND;
+			}
+
+			// 第三大地板上的水管 右邊
+			else if (walkingDistanceX < 9.66597 && walkingDistanceX> 9.64597 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.53)
+			{
+				walkingDistanceX = 9.666;
 				speed = 0;
 				state = STAND;
 			}
@@ -294,7 +441,7 @@ void DempApp::Display(bool auto_redraw)
 					walkingDistanceY += 0.02*risingSpeed;
 				}
 
-				if (walkingDistanceY > 0.6 + jumpGroundHeight)
+				if (walkingDistanceY > 0.65 + jumpGroundHeight)
 				{
 					inair = FLOATING;
 				}
@@ -316,13 +463,12 @@ void DempApp::Display(bool auto_redraw)
 				if (risingSpeed >= 5)
 					risingSpeed = 5;
 				walkingDistanceY -= 0.01*risingSpeed;
-				/*if (walkingDistanceY < 0)
-				{
-					walkingDistanceY = 0;
-					//inair = STANDING;
-					risingSpeed = 5;
-					falltimer = 0;
-				}*/
+			}
+			if (walkingDistanceY < -0.41)
+			{
+				die = 1;
+				lives--;
+				controlAble = 0;
 			}
 		}
 
@@ -371,7 +517,13 @@ void DempApp::Display(bool auto_redraw)
 			}
 			else if (endingstep == 3)
 			{
-
+				endtimer++;
+				if (endtimer > 120)
+				{
+					endingstep = 4;
+					startGame = 3;
+					gluLookAt(-screenmiddle, 0, 0, -screenmiddle, 0, -1, 0, 1, 0);
+				}
 			}
 		}
 		else if (right)	//向右
@@ -471,7 +623,14 @@ void DempApp::KeyDown(int key)
 	InitGlutInput::KeyDown(key);
 	if (controlAble)
 	{
-
+		if (key == 'q')
+		{
+			walkingDistanceY += 0.01;
+		}
+		if (key == 'a')
+		{
+			walkingDistanceY -= 0.01;
+		}
 		if (key == KEY_RIGHT)
 		{
 			state = WALKING;
@@ -495,11 +654,15 @@ void DempApp::KeyDown(int key)
 			}
 		}
 	}
-	if (key == KEY_ENTER)
+	if (startGame == 0)
 	{
-		startGame = 1;
-		//TextureApp::ScreenShot(std::string("ScreenShot"));
+		if (key == KEY_ENTER)
+		{
+			startGame = 2;
+			//TextureApp::ScreenShot(std::string("ScreenShot"));
+		}
 	}
+
 	
 }
 
@@ -770,10 +933,10 @@ void DempApp::renderFlag(int dir)
 
 
 
-bool haveGround(float x, float y)
+bool DempApp::haveGround(float x, float y)
 {
 	// 第一大地板上的水管
-	if (y<=0.41 && x>= 1.102 && x<= 1.35)
+	if (y<0.4100001 && x>= 1.102 && x<= 1.35)
 	{
 		walkingDistanceY = 0.41;
 		risingSpeed = 1;
@@ -792,6 +955,15 @@ bool haveGround(float x, float y)
 	else if (y <= 0 && x >= 2.255&&x <= 6.149)
 	{
 		walkingDistanceY = 0;
+		risingSpeed = 1;
+		falltimer = 0;
+		return 1;
+	}
+	// 第三大地板上的水管
+	else if (y < 0.5400001 && x >= 9.41198 && x <= 9.66597)
+	{
+		walkingDistanceY = 0;
+		walkingDistanceY = 0.54;
 		risingSpeed = 1;
 		falltimer = 0;
 		return 1;
