@@ -16,6 +16,7 @@
 
 bool RightButtonDown = false;
 bool LeftButtonDown = false;
+bool UpButtonDown = false;
 
 DempApp::DempApp(void) :
 	m_Angle(2),
@@ -44,7 +45,7 @@ void DempApp::Finalize()
 }
 
 float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0;
-int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 0, timer = 0, inair = 0, floattimer = 0;
+int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 0, risingSpeed = 2, timer = 0, inair = 0, floattimer = 0;
 
 void DempApp::Display(bool auto_redraw)
 {
@@ -76,6 +77,7 @@ void DempApp::Display(bool auto_redraw)
 	std::cout << "screenmiddle:" << screenmiddle << std::endl;
 	std::cout << "now:" << walkingDistanceX << std::endl;
 	std::cout << "height" << walkingDistanceY << std::endl;
+	std::cout << "risingSpeed: " << risingSpeed << std::endl;
 
 	// 螢幕中心點 起始為0
 	if (farestPos > (0.222 + screenmiddle))
@@ -103,7 +105,17 @@ void DempApp::Display(bool auto_redraw)
 
 	if (inair == RISING)
 	{
-		walkingDistanceY += 0.02;
+		if (UpButtonDown)
+		{
+			pressTime++;
+			if (pressTime % 5 == 0)
+				risingSpeed++;
+			if (risingSpeed > 5)
+				risingSpeed = 5;
+
+			walkingDistanceY += 0.01*risingSpeed;
+		}
+
 		if (walkingDistanceY > 0.6)
 		{
 			inair = FLOATING;
@@ -125,6 +137,7 @@ void DempApp::Display(bool auto_redraw)
 		{
 			walkingDistanceY = 0;
 			inair = STANDING;
+			risingSpeed = 2;
 		}
 	}
 
@@ -222,12 +235,14 @@ void DempApp::KeyDown(int key)
 	{
 		state = WALKING;
 		RightButtonDown = true;
+		LeftButtonDown = false;
 		right = 1;
 	}
 	else if (key == KEY_LEFT)
 	{
 		state = WALKING;
 		LeftButtonDown = true;
+		RightButtonDown = false;
 		right = 0;
 	}
 	if (key == KEY_UP)
@@ -235,6 +250,7 @@ void DempApp::KeyDown(int key)
 		if (inair == STANDING)
 		{
 			inair = RISING;
+			UpButtonDown = true;
 		}
 	}
 }
@@ -244,17 +260,30 @@ void DempApp::KeyUp(int key)
 	InitGlutInput::KeyUp(key);
 	if (key == KEY_RIGHT)
 	{
-		RightButtonDown = false;
-		state = STAND;
-		//speed = 0;
-		pressTime = 0;
+		if (right)
+		{
+			RightButtonDown = false;
+			state = STAND;
+			//speed = 0;
+			pressTime = 0;
+		}		
 	}
 	else if (key == KEY_LEFT)
 	{
-		LeftButtonDown = false;
-		state = STAND;
-		//speed = 0;
+		if (right == 0)
+		{
+			LeftButtonDown = false;
+			state = STAND;
+			//speed = 0;
+			pressTime = 0;
+		}		
+	}
+	else if (key == KEY_UP)
+	{
+		UpButtonDown = false;
 		pressTime = 0;
+		if (inair == RISING)
+			inair = FLOATING;
 	}
 }
 
