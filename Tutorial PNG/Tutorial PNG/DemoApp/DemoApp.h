@@ -34,6 +34,7 @@ protected:
 	void renderWalk(int dir);
 	void renderSlide(int dir);
 	void renderJump(int dir);
+	void renderFlag(int dir);
 	//bool haveGround(float x, float y);
 private:
 };
