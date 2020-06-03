@@ -33,7 +33,10 @@ protected:
 	void renderStand(int dir);
 	void renderWalk(int dir);
 	void renderSlide(int dir);
+	void renderJump(int dir);
+	//bool haveGround(float x, float y);
 private:
 };
+bool haveGround(float x, float y);
 
 
