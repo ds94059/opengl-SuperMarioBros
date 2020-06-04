@@ -22,6 +22,8 @@ private:
 	GLuint m_2;
 	GLuint m_1;
 	GLuint m_X;
+	GLuint m_FlowerOpen;
+	GLuint m_FlowerClose;
 public:
 	DempApp(void);
 	~DempApp(void);
@@ -41,6 +43,7 @@ protected:
 	void renderJump(int dir);
 	void renderFlag(int dir);
 	bool haveGround(float x, float y);
+	bool haveRoof(float x, float y);
 private:
 };
 
