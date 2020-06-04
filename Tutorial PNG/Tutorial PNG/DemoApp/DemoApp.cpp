@@ -64,7 +64,7 @@ void DempApp::Finalize()
 }
 
 float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight=0, startrange = 0.7;
-int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0,endingstep=0,endtimer=0, startGame=0,die=0,dietimer=0,starttimer=0,lives=3;
+int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3;
 bool controlAble = 0,//1可控制 0不可
 		endGame=0;
 void DempApp::Display(bool auto_redraw)
@@ -164,6 +164,8 @@ void DempApp::Display(bool auto_redraw)
 			speed = 0;
 			die = 0;
 			state = STANDING;
+			LeftButtonDown = FALSE;
+			RightButtonDown = FALSE;
 		}
 		starttimer++;
 		
@@ -426,8 +428,9 @@ void DempApp::Display(bool auto_redraw)
 				inair = STANDING;
 				jumpGroundHeight = walkingDistanceY;
 			}
-			else if (inair != RISING)
+			else if (inair != RISING && inair!=FALLING)
 			{
+				risingSpeed = 2;
 				inair = FALLING;
 			}
 
@@ -435,8 +438,8 @@ void DempApp::Display(bool auto_redraw)
 			{
 				if (UpButtonDown)
 				{
-					pressTime++;
-					if (pressTime % 5 == 0)
+					pressTimeUp++;
+					if (pressTimeUp % 1 == 0)
 						risingSpeed--;
 					if (risingSpeed <= 2)
 						risingSpeed = 2;
@@ -452,7 +455,7 @@ void DempApp::Display(bool auto_redraw)
 			else if (inair == FLOATING)
 			{
 				floattimer++;
-				if (floattimer > 5)
+				if (floattimer > 10)
 				{
 					floattimer = 0;
 					inair = FALLING;
@@ -697,7 +700,7 @@ void DempApp::KeyUp(int key)
 		if (key == KEY_UP)
 		{
 			UpButtonDown = false;
-			pressTime = 0;
+			pressTimeUp = 0;
 			if (inair == RISING)
 				inair = FLOATING;
 		}
@@ -942,7 +945,7 @@ bool DempApp::haveGround(float x, float y)
 	if (y<0.4100001 && x>= 1.102 && x<= 1.35)
 	{
 		walkingDistanceY = 0.41;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -950,7 +953,7 @@ bool DempApp::haveGround(float x, float y)
 	else if (y <= 0 && x >= -0.667&&x <= 2.123)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -958,7 +961,7 @@ bool DempApp::haveGround(float x, float y)
 	else if (y <= 0 && x >= 2.255&&x <= 6.149)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -967,7 +970,7 @@ bool DempApp::haveGround(float x, float y)
 	{
 		walkingDistanceY = 0;
 		walkingDistanceY = 0.54;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -975,7 +978,7 @@ bool DempApp::haveGround(float x, float y)
 	else if (y <= 0 && x >= 6.463&&x <= 12.3651)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -983,7 +986,7 @@ bool DempApp::haveGround(float x, float y)
 	else if (y <= 0 && x >= 12.4981 &&x <= 14.5501)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -991,7 +994,7 @@ bool DempApp::haveGround(float x, float y)
 	else if (y <= 0 && x >= 14.7761&&x <= 15.0721)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -999,7 +1002,7 @@ bool DempApp::haveGround(float x, float y)
 	else if (y <= 0 && x >= 15.2181&&x <= 15.8001)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -1007,7 +1010,7 @@ bool DempApp::haveGround(float x, float y)
 	else if (y <= 0 && x >= 16.0841)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
