@@ -52,7 +52,10 @@ void DempApp::Initialize()
 	m_2 = TextureApp::GenTexture("Media\\Texture\\2.png");
 	m_1 = TextureApp::GenTexture("Media\\Texture\\1.png");
 	m_X = TextureApp::GenTexture("Media\\Texture\\X.png");
-	
+
+	m_FlowerOpen = TextureApp::GenTexture("Media\\Texture\\flowerOpen.png");
+	m_FlowerClose = TextureApp::GenTexture("Media\\Texture\\flowerClose.png");
+
 	ShaderInfo shaders[] = {
 		{ GL_VERTEX_SHADER, "Mario.vs" },//vertex shader
 		{ GL_FRAGMENT_SHADER, "Mario.fs" },//fragment shader
@@ -104,7 +107,7 @@ void DempApp::Finalize()
 }
 
 float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight=0, startrange = 0.7;
-int walkingState = 0, right = 1, state = STAND, pressTime = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0,endingstep=0,endtimer=0, startGame=0,die=0,dietimer=0,starttimer=0,lives=3;
+int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove=0;
 bool controlAble = 0,//1可控制 0不可
 		endGame=0;
 void DempApp::Display(bool auto_redraw)
@@ -204,6 +207,8 @@ void DempApp::Display(bool auto_redraw)
 			speed = 0;
 			die = 0;
 			state = STANDING;
+			LeftButtonDown = FALSE;
+			RightButtonDown = FALSE;
 		}
 		starttimer++;
 		
@@ -243,6 +248,41 @@ void DempApp::Display(bool auto_redraw)
 		glTexCoord2d(0, 1); glVertex2d(-1, 1);
 		glEnd();
 		glPopMatrix();
+
+		// 第一朵花
+		if (flowerMove < 10)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_FlowerOpen);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0, 0); glVertex2d(1.181, 0.36);
+			glTexCoord2d(1, 0); glVertex2d(1.281, 0.36);
+			glTexCoord2d(1, 1); glVertex2d(1.281, 0.61);
+			glTexCoord2d(0, 1); glVertex2d(1.181, 0.61);
+			glEnd();
+			glPopMatrix();
+			flowerMove++;
+		}
+		else
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_FlowerClose);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0, 0); glVertex2d(1.181, 0.36);
+			glTexCoord2d(1, 0); glVertex2d(1.281, 0.36);
+			glTexCoord2d(1, 1); glVertex2d(1.281, 0.61);
+			glTexCoord2d(0, 1); glVertex2d(1.181, 0.61);
+			glEnd();
+			glPopMatrix();
+			flowerMove++;
+			if (flowerMove > 20)
+				flowerMove = 0;
+		}
+
+
+
 
 		timer++;
 
@@ -345,6 +385,22 @@ void DempApp::Display(bool auto_redraw)
 				state = STAND;
 			}
 
+			// 第三大地板上的撞柱 左邊
+			else if (walkingDistanceX > 8.27 && walkingDistanceX < 8.29 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
+			{
+				walkingDistanceX = 8.269;
+				speed = 0;
+				state = STAND;
+			}
+
+			// 第三大地板上的撞柱 右邊
+			else if (walkingDistanceX < 8.445 && walkingDistanceX> 8.425 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.4)
+			{
+				walkingDistanceX = 8.4451;
+				speed = 0;
+				state = STAND;
+			}
+
 			// 第三大地板上的水管 左邊
 			else if (walkingDistanceX > 9.41198 && walkingDistanceX < 9.43198 && walkingDistanceY >= 0 && walkingDistanceY < 0.53)
 			{
@@ -357,6 +413,22 @@ void DempApp::Display(bool auto_redraw)
 			else if (walkingDistanceX < 9.66597 && walkingDistanceX> 9.64597 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.53)
 			{
 				walkingDistanceX = 9.666;
+				speed = 0;
+				state = STAND;
+			}
+
+			// 第三大地板上的水管2 左邊
+			else if (walkingDistanceX > 10.814 && walkingDistanceX < 10.834 && walkingDistanceY >= 0 && walkingDistanceY < 0.53)
+			{
+				walkingDistanceX = 10.813;
+				speed = 0;
+				state = STAND;
+			}
+
+			// 第三大地板上的水管2 右邊
+			else if (walkingDistanceX < 11.064 && walkingDistanceX> 11.044 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.53)
+			{
+				walkingDistanceX = 11.0641;
 				speed = 0;
 				state = STAND;
 			}
@@ -416,6 +488,21 @@ void DempApp::Display(bool auto_redraw)
 				speed = 0;
 				state = STAND;
 			}
+			// 第六大地板上的撞柱 左邊
+			else if (walkingDistanceX > 15.8001 && walkingDistanceX < 15.8201 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
+			{
+			walkingDistanceX = 15.8;
+			speed = 0;
+			state = STAND;
+			}
+
+			// 第六大地板上的撞柱 右邊
+			else if (walkingDistanceX < 15.9501 && walkingDistanceX> 15.9301 && walkingDistanceY < 0.4)
+			{
+			walkingDistanceX = 15.9511;
+			speed = 0;
+			state = STAND;
+			}
 
 			// 最終大地板 左邊
 			else if (walkingDistanceX > 16.0841 && walkingDistanceX < 16.1041 && walkingDistanceY < 0)
@@ -466,8 +553,9 @@ void DempApp::Display(bool auto_redraw)
 				inair = STANDING;
 				jumpGroundHeight = walkingDistanceY;
 			}
-			else if (inair != RISING)
+			else if (inair != RISING && inair!=FALLING)
 			{
+				risingSpeed = 2;
 				inair = FALLING;
 			}
 
@@ -475,8 +563,8 @@ void DempApp::Display(bool auto_redraw)
 			{
 				if (UpButtonDown)
 				{
-					pressTime++;
-					if (pressTime % 5 == 0)
+					pressTimeUp++;
+					if (pressTimeUp % 1 == 0)
 						risingSpeed--;
 					if (risingSpeed <= 2)
 						risingSpeed = 2;
@@ -492,7 +580,7 @@ void DempApp::Display(bool auto_redraw)
 			else if (inair == FLOATING)
 			{
 				floattimer++;
-				if (floattimer > 5)
+				if (floattimer > 10)
 				{
 					floattimer = 0;
 					inair = FALLING;
@@ -737,7 +825,7 @@ void DempApp::KeyUp(int key)
 		if (key == KEY_UP)
 		{
 			UpButtonDown = false;
-			pressTime = 0;
+			pressTimeUp = 0;
 			if (inair == RISING)
 				inair = FLOATING;
 		}
@@ -982,7 +1070,7 @@ bool DempApp::haveGround(float x, float y)
 	if (y<0.4100001 && x>= 1.102 && x<= 1.35)
 	{
 		walkingDistanceY = 0.41;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -990,7 +1078,7 @@ bool DempApp::haveGround(float x, float y)
 	else if (y <= 0 && x >= -0.667&&x <= 2.123)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -998,7 +1086,15 @@ bool DempApp::haveGround(float x, float y)
 	else if (y <= 0 && x >= 2.255&&x <= 6.149)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
+	// 第三大地板上的撞柱
+	else if (y < 0.4100001 && x >= 8.27 && x <= 8.445)
+	{
+		walkingDistanceY = 0.41;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -1007,7 +1103,16 @@ bool DempApp::haveGround(float x, float y)
 	{
 		walkingDistanceY = 0;
 		walkingDistanceY = 0.54;
-		risingSpeed = 1;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
+	// 第三大地板上的水管2
+	else if (y < 0.5400001 && x >= 10.814 && x <= 11.064)
+	{
+		walkingDistanceY = 0;
+		walkingDistanceY = 0.54;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -1015,7 +1120,7 @@ bool DempApp::haveGround(float x, float y)
 	else if (y <= 0 && x >= 6.463&&x <= 12.3651)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -1023,7 +1128,7 @@ bool DempApp::haveGround(float x, float y)
 	else if (y <= 0 && x >= 12.4981 &&x <= 14.5501)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -1031,15 +1136,23 @@ bool DempApp::haveGround(float x, float y)
 	else if (y <= 0 && x >= 14.7761&&x <= 15.0721)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
 	// 第六大地板
-	else if (y <= 0 && x >= 15.2181&&x <= 15.8001)
+	else if (y <= 0 && x >= 15.2181&&x <= 15.81)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
+	// 第六大地板上的撞柱
+	else if (y < 0.4100001 && x >= 15.8001 && x <= 15.9501)
+	{
+		walkingDistanceY = 0.41;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -1047,7 +1160,7 @@ bool DempApp::haveGround(float x, float y)
 	else if (y <= 0 && x >= 16.0841)
 	{
 		walkingDistanceY = 0;
-		risingSpeed = 1;
+		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
 	}
@@ -1055,6 +1168,10 @@ bool DempApp::haveGround(float x, float y)
 	{
 		return 0;
 	}
+}
+bool DempApp::haveRoof(float x, float y)
+{
+	return false;
 }
 
 
