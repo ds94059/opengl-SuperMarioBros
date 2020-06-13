@@ -205,12 +205,7 @@ void DempApp::Display(bool auto_redraw)
 				startGame = 1;
 				controlAble = 1;
 			}
-
 		}
-
-
-		
-
 	}
 	else if (startGame == 3)
 	{
@@ -349,8 +344,6 @@ void DempApp::Display(bool auto_redraw)
 			}
 			walls();
 			
-
-
 			// 下墜 天花板 判定
 			if ((haveGround(walkingDistanceX, walkingDistanceY) == 1) && inair != RISING)
 			{
@@ -410,7 +403,6 @@ void DempApp::Display(bool auto_redraw)
 				controlAble = 0;
 			}
 		}
-
 
 		// 拉到旗子
 		if (endGame == 1)
@@ -510,7 +502,6 @@ void DempApp::Display(bool auto_redraw)
 			}
 		}
 
-
 		if (state == WALKING)
 		{
 			move();
@@ -535,7 +526,6 @@ void DempApp::Display(bool auto_redraw)
 		{
 			timer = 0;
 		}
-
 		drawMarioTexture();
 	}
 
@@ -882,8 +872,6 @@ void DempApp::renderFlag(int dir)
 	}
 
 }
-
-
 
 bool DempApp::haveGround(float x, float y)
 {
