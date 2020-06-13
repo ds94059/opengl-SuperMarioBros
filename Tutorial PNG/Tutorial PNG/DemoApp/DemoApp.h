@@ -8,7 +8,7 @@ using namespace glm;
 
 
 
-class DempApp : 
+class DempApp :
 	public InitOpenGLApp,
 	public InitGlutInput
 {
@@ -30,6 +30,21 @@ private:
 
 	// uniform parameter
 	GLuint Mario_uniform;
+
+	GLuint marioVAO, marioVBO, marioEBO;
+
+	float vertices[32] = {
+		// positions          // colors           // texture coords
+		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+		-0.5f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 1.0f  // top left
+	};
+	unsigned int indices[6] = {
+		0, 1, 3, // first triangle
+		1, 2, 3  // second triangle
+	};
+
 public:
 	DempApp(void);
 	~DempApp(void);
@@ -51,6 +66,8 @@ protected:
 	bool haveGround(float x, float y);
 	bool haveRoof(float x, float y);
 	unsigned int loadTexture(std::string path, int imageType);
+	void drawMarioTexture();
+	void initMarioTexture();
 private:
 };
 

@@ -27,6 +27,15 @@ unsigned int quadVAO, quadVBO;
 unsigned int framebuffer;
 unsigned int textureColorbuffer;
 
+mat4 translate(float x, float y, float z) {
+	vec4 t = vec4(x, y, z, 1);//w = 1 ,�hx,y,z=0�ɤ]��translate
+	vec4 c1 = vec4(1, 0, 0, 0);
+	vec4 c2 = vec4(0, 1, 0, 0);
+	vec4 c3 = vec4(0, 0, 1, 0);
+	mat4 M = mat4(c1, c2, c3, t);
+	return M;
+}
+
 DempApp::DempApp(void) :
 	m_Angle(2),
 	m_CoinRotation(0.0)
@@ -59,19 +68,10 @@ void DempApp::Initialize()
 
 	m_Pipe = TextureApp::GenTexture("Media\\Texture\\Pipe.png");
 
-	//ShaderInfo shaders[] = {
-	//	{ GL_VERTEX_SHADER, "Mario.vs" },//vertex shader
-	//	{ GL_FRAGMENT_SHADER, "Mario.fs" },//fragment shader
-	//	{ GL_NONE, NULL } };
-	//program = LoadShaders(shaders);//讀取shader
-	//glUseProgram(program);//uniform參數數值前必須先use shader
 
-	//m_Mario = TextureApp::GenTexture("Media\\Texture\\Mario2.png");
-	//glBindTexture(GL_TEXTURE_2D, m_Mario);
-	////glActiveTexture(GL_TEXTURE0);
-	////glDrawArrays(GL_TRIANGLE_STRIP,0,4);
-
+	initMarioTexture();
 }
+
 
 void DempApp::Finalize()
 {
@@ -197,6 +197,10 @@ void DempApp::Display(bool auto_redraw)
 			}
 
 		}
+
+
+		
+
 	}
 	else if (startGame == 3)
 	{
@@ -725,6 +729,8 @@ void DempApp::Display(bool auto_redraw)
 		{
 			timer = 0;
 		}
+
+		drawMarioTexture();
 	}
 
 	glDisable(GL_BLEND);
@@ -1217,3 +1223,55 @@ unsigned int DempApp::loadTexture(std::string path, int imageType)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	return textureID;
 }
+
+void DempApp::drawMarioTexture()
+{
+	glBindVertexArray(marioVAO);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_Coin);
+	glUseProgram(program);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+	glUseProgram(0);
+}
+
+void DempApp::initMarioTexture()
+{
+	//////////////////////////pass texture to shader
+	///////////////initial
+	ShaderInfo shaders[] = {
+		{ GL_VERTEX_SHADER, "Mario.vs" },//vertex shader
+		{ GL_FRAGMENT_SHADER, "Mario.fs" },//fragment shader
+		{ GL_NONE, NULL } };
+	program = LoadShaders(shaders);//讀取shader
+	glUseProgram(program);//uniform參數數值前必須先use shader
+
+	///////////////draw
+	glGenVertexArrays(1, &marioVAO);
+	glGenBuffers(1, &marioVBO);
+	glGenBuffers(1, &marioEBO);
+
+	glBindVertexArray(marioVAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, marioVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, marioEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	//// color attribute
+	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	//glEnableVertexAttribArray(1);
+	// texture coord attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+
+	m_Coin = loadTexture("Media\\Texture\\Coin.png", GL_RGBA);
+	glBindVertexArray(0);
+	glUseProgram(0);
+}
+
