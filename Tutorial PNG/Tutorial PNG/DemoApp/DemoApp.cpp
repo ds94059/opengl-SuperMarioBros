@@ -551,7 +551,7 @@ void DempApp::Display(bool auto_redraw)
 				inair = STANDING;
 				jumpGroundHeight = walkingDistanceY;
 			}
-			else if (inair != RISING && inair != FALLING)
+			else if (inair != RISING && inair != FALLING && inair != FLOATING)
 			{
 				risingSpeed = 2;
 				inair = FALLING;
@@ -578,7 +578,7 @@ void DempApp::Display(bool auto_redraw)
 			else if (inair == FLOATING)
 			{
 				floattimer++;
-				if (floattimer > 10)
+				if (floattimer > 1)
 				{
 					floattimer = 0;
 					inair = FALLING;
