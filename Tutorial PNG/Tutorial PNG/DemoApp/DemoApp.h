@@ -27,7 +27,8 @@ private:
 	GLuint m_FlowerOpen;
 	GLuint m_FlowerClose;
 	GLuint m_Pipe;
-
+	GLuint m_question1;
+	GLuint m_question2;
 	// uniform parameter
 	GLuint Mario_uniform;
 
@@ -63,8 +64,11 @@ protected:
 	void renderSlide(int dir);
 	void renderJump(int dir);
 	void renderFlag(int dir);
+	void renderBlock(float x, float y, bool used);
+	bool blockRoof(float x, float y, float xl, float x2, float y1, float y2);
 	bool haveGround(float x, float y);
 	bool haveRoof(float x, float y);
+	void walls();
 	unsigned int loadTexture(std::string path, int imageType);
 	void drawMarioTexture();
 	void initMarioTexture();

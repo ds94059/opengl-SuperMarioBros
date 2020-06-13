@@ -66,6 +66,8 @@ void DempApp::Initialize()
 	m_FlowerOpen = TextureApp::GenTexture("Media\\Texture\\flowerOpen.png");
 	m_FlowerClose = TextureApp::GenTexture("Media\\Texture\\flowerClose.png");
 
+	m_question1 = TextureApp::GenTexture("Media\\Texture\\questionblock.png");
+	m_question2 = TextureApp::GenTexture("Media\\Texture\\questionblock2.png");
 	m_Pipe = TextureApp::GenTexture("Media\\Texture\\Pipe.png");
 
 
@@ -82,6 +84,7 @@ float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 
 int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove = 0;
 bool controlAble = 0,//1可控制 0不可
 endGame = 0;
+bool firstlowquestion = 0, firsthighquestion=0, secondlowquestion = 0, secondhighquestion = 0, thirdlowquestion = 0, thirdhighquestion = 0, fourthquestion1 = 0;
 void DempApp::Display(bool auto_redraw)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -89,7 +92,7 @@ void DempApp::Display(bool auto_redraw)
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	if (startGame == 0)
 	{
 		glPushMatrix();
@@ -179,6 +182,13 @@ void DempApp::Display(bool auto_redraw)
 			state = STAND;
 			speed = 0;
 			die = 0;
+			firstlowquestion = 0;
+			firsthighquestion = 0;
+			secondlowquestion = 0;
+			secondhighquestion = 0;
+			thirdlowquestion = 0;
+			thirdhighquestion = 0;
+			fourthquestion1 = 0;
 			state = STANDING;
 			LeftButtonDown = FALSE;
 			RightButtonDown = FALSE;
@@ -257,6 +267,29 @@ void DempApp::Display(bool auto_redraw)
 			if (flowerMove > 20)
 				flowerMove = 0;
 		}
+		// 第一個問號 低
+		renderBlock(1.539, 0.4, firstlowquestion);
+		// 第一個問號 高
+		renderBlock(1.539, 0.95, firsthighquestion);
+
+		// 第二個問號 低
+		renderBlock(4.952, 0.4, secondlowquestion);
+		// 第二個問號 高
+		renderBlock(4.952, 0.95, secondhighquestion);
+
+		// 第三個問號 低
+		renderBlock(5.2, 0.4, thirdlowquestion);
+		// 第三個問號 高
+		renderBlock(5.2, 0.95, thirdhighquestion);
+
+		//第四個問號1
+		renderBlock(7.219, 0.4, fourthquestion1);
+		//第四個問號2
+		renderBlock(7.319, 0.4, fourthquestion1);
+		//第四個問號3
+		renderBlock(7.419, 0.4, fourthquestion1);
+		//第四個問號4
+		renderBlock(7.519, 0.4, fourthquestion1);
 
 		//// 水管
 		//glPushMatrix();
@@ -314,253 +347,26 @@ void DempApp::Display(bool auto_redraw)
 					screenmiddle = farestPos - 0.222;
 				}
 			}
-
-			// 螢幕左邊的牆壁 與螢幕中心點相差0.648
-			if (walkingDistanceX < -0.648 + screenmiddle)
-			{
-				walkingDistanceX = -0.647 + screenmiddle;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第一大地板上的水管 左邊
-			else if (walkingDistanceX > 1.102 && walkingDistanceX < 1.122 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
-			{
-				walkingDistanceX = 1.101;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第一大地板上的水管 右邊
-			else if (walkingDistanceX < 1.35 && walkingDistanceX> 1.33 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.4)
-			{
-				walkingDistanceX = 1.351;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第一大地板 右邊
-			else if (walkingDistanceX < 2.123 && walkingDistanceX>2.103 &&  walkingDistanceY < 0)
-			{
-				walkingDistanceX = 2.1231;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第二大地板 左邊
-			else if (walkingDistanceX > 2.255 && walkingDistanceX < 2.275 && walkingDistanceY < 0)
-			{
-				walkingDistanceX = 2.254;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第二大地板 右邊
-			else if (walkingDistanceX < 6.149 && walkingDistanceX>6.129 &&  walkingDistanceY < 0)
-			{
-				walkingDistanceX = 6.1491;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第三大地板 左邊
-			else if (walkingDistanceX > 6.463 && walkingDistanceX < 6.483 && walkingDistanceY < 0)
-			{
-				walkingDistanceX = 6.462;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第三大地板上的撞柱 左邊
-			else if (walkingDistanceX > 8.27 && walkingDistanceX < 8.29 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
-			{
-				walkingDistanceX = 8.269;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第三大地板上的撞柱 右邊
-			else if (walkingDistanceX < 8.445 && walkingDistanceX> 8.425 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.4)
-			{
-				walkingDistanceX = 8.4451;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第三大地板上的水管 左邊
-			else if (walkingDistanceX > 9.41198 && walkingDistanceX < 9.43198 && walkingDistanceY >= 0 && walkingDistanceY < 0.53)
-			{
-				walkingDistanceX = 9.4119;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第三大地板上的水管 右邊
-			else if (walkingDistanceX < 9.66597 && walkingDistanceX> 9.64597 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.53)
-			{
-				walkingDistanceX = 9.666;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第三大地板上的水管2 左邊
-			else if (walkingDistanceX > 10.814 && walkingDistanceX < 10.834 && walkingDistanceY >= 0 && walkingDistanceY < 0.53)
-			{
-				walkingDistanceX = 10.813;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第三大地板上的水管2 右邊
-			else if (walkingDistanceX < 11.064 && walkingDistanceX> 11.044 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.53)
-			{
-				walkingDistanceX = 11.0641;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第三大地板 右邊
-			else if (walkingDistanceX < 12.3651 && walkingDistanceX> 12.3451 &&  walkingDistanceY < 0)
-			{
-				walkingDistanceX = 12.3652;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第四大地板 左邊
-			else if (walkingDistanceX > 12.4981 && walkingDistanceX < 12.5181 && walkingDistanceY < 0)
-			{
-				walkingDistanceX = 12.498;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第四大地板 小水管 左邊
-			else if (walkingDistanceX > 13.528 && walkingDistanceX < 13.548 && walkingDistanceY >= 0 && walkingDistanceY < 0.26)
-			{
-				walkingDistanceX = 13.527;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第四大地板 小水管 右邊
-			else if (walkingDistanceX < 13.778 && walkingDistanceX> 13.758 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.26)
-			{
-				walkingDistanceX = 13.779;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第四大地板 右邊
-			else if (walkingDistanceX < 14.5501 && walkingDistanceX> 14.5301 &&  walkingDistanceY < 0)
-			{
-				walkingDistanceX = 14.5502;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第五大地板 左邊
-			else if (walkingDistanceX > 14.7761 && walkingDistanceX < 14.7961 && walkingDistanceY < 0)
-			{
-				walkingDistanceX = 14.776;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第五大地板 右邊
-			else if (walkingDistanceX < 15.0721 && walkingDistanceX> 15.0521 &&  walkingDistanceY < 0)
-			{
-				walkingDistanceX = 15.0722;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第六大地板 左邊
-			else if (walkingDistanceX > 15.2181 && walkingDistanceX < 15.2381 && walkingDistanceY < 0)
-			{
-				walkingDistanceX = 15.218;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第六大地板 右邊
-			else if (walkingDistanceX < 15.8001 && walkingDistanceX> 15.7801 &&  walkingDistanceY < 0)
-			{
-				walkingDistanceX = 15.8002;
-				speed = 0;
-				state = STAND;
-			}
-			// 第六大地板上的撞柱 左邊
-			else if (walkingDistanceX > 15.8001 && walkingDistanceX < 15.8201 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
-			{
-				walkingDistanceX = 15.8;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 第六大地板上的撞柱 右邊
-			else if (walkingDistanceX < 15.9501 && walkingDistanceX> 15.9301 && walkingDistanceY < 0.4)
-			{
-				walkingDistanceX = 15.9511;
-				speed = 0;
-				state = STAND;
-			}
-
-			// 最終大地板 左邊
-			else if (walkingDistanceX > 16.0841 && walkingDistanceX < 16.1041 && walkingDistanceY < 0)
-			{
-				walkingDistanceX = 16.084;
-				speed = 0;
-				state = STAND;
-			}
-			else if (LeftButtonDown == true || RightButtonDown == true)
-			{
-				state = WALKING;
-			}
-			//旗子
-			if (walkingDistanceX >= 18.9462 && walkingDistanceX < 18.9662)
-			{
-				if (walkingDistanceY < 0.15)	//旗子下的小方塊
-				{
-					walkingDistanceX = 18.9461;
-					speed = 0;
-					state = STAND;
-				}
-				else
-				{
-					endGame = 1;
-					LeftButtonDown = false;
-					RightButtonDown = false;
-					state = STAND;
-					speed = 0;
-					controlAble = 0;
-				}
-
-			}
+			walls();
+			
 
 
-
-			// 最右邊的牆壁
-			if (walkingDistanceX > 20.072)
-			{
-				walkingDistanceX = 20.071;
-				speed = 0;
-				state = STAND;
-			}
-
-
-
+			// 下墜 天花板 判定
 			if ((haveGround(walkingDistanceX, walkingDistanceY) == 1) && inair != RISING)
 			{
 				inair = STANDING;
 				jumpGroundHeight = walkingDistanceY;
 			}
-			else if (inair != RISING && inair != FALLING)
+			else if (inair != RISING && inair != FALLING && inair != FLOATING)
 			{
 				risingSpeed = 2;
 				inair = FALLING;
 			}
-
+			else if((haveRoof(walkingDistanceX, walkingDistanceY) == 1) && inair == RISING)
+			{
+				inair = FALLING;
+			}
+			
 			if (inair == RISING)
 			{
 				if (UpButtonDown)
@@ -582,7 +388,7 @@ void DempApp::Display(bool auto_redraw)
 			else if (inair == FLOATING)
 			{
 				floattimer++;
-				if (floattimer > 10)
+				if (floattimer > 1)
 				{
 					floattimer = 0;
 					inair = FALLING;
@@ -875,8 +681,8 @@ void DempApp::renderStand(int dir)
 		glTranslated(-0.305, -0.7, 0);
 		glBindTexture(GL_TEXTURE_2D, m_Mario);
 		glBegin(GL_QUADS);
-		glTexCoord2d(0.458333, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.497395, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+		glTexCoord2d(0.458333, 0.91098);glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+		glTexCoord2d(0.497395, 0.91098);glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
 		glTexCoord2d(0.497395, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
 		glTexCoord2d(0.458333, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
 		glEnd();
@@ -1089,10 +895,58 @@ bool DempApp::haveGround(float x, float y)
 		falltimer = 0;
 		return 1;
 	}
+	// 第一個問號 低
+	else	if (y>0.4 && y < 0.5500001 && x >= 1.445 && x <= 1.635)
+		{
+			walkingDistanceY = 0.55;
+			risingSpeed = 5;
+			falltimer = 0;
+			return 1;
+		}
+	// 第一個問號 高
+	else	if (y > 0.95 && y < 1.100001 && x >= 1.445 && x <= 1.635)
+	{
+		walkingDistanceY = 1.1;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
 	// 第一大地板
 	else if (y <= 0 && x >= -0.667&&x <= 2.123)
 	{
 		walkingDistanceY = 0;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
+	// 第二個問號 低
+	else	if (y > 0.4 && y < 0.5500001 && x >= 4.856 && x <= 5.048)
+	{
+		walkingDistanceY = 0.55;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
+	// 第二個問號 高
+	else	if (y > 0.95 && y < 1.100001 && x >= 4.856 && x <= 5.048)
+	{
+		walkingDistanceY = 1.1;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
+	// 第三個問號 低
+	else	if (y > 0.4 && y < 0.5500001 && x >= 5.104 && x <= 5.294)
+	{
+		walkingDistanceY = 0.55;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
+	// 第三個問號 高
+	else	if (y > 0.95 && y < 1.100001 && x >= 5.104 && x <= 5.294)
+	{
+		walkingDistanceY = 1.1;
 		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
@@ -1188,6 +1042,70 @@ bool DempApp::haveGround(float x, float y)
 		falltimer = 0;
 		return 1;
 	}
+	// 階梯1
+	else if (y < 0.1500001 && x >= 17.462 && x <= 17.5682)
+	{
+	walkingDistanceY = 0.15;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯2
+	else if (y < 0.2800001 && x >= 17.5482 && x <= 17.6522)
+	{
+	walkingDistanceY = 0.28;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯3
+	else if (y < 0.4100001 && x >= 17.6322 && x <= 17.7402)
+	{
+	walkingDistanceY = 0.41;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯4
+	else if (y < 0.5500001 && x >= 17.7202 && x <=17.8303)
+	{
+	walkingDistanceY = 0.55;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯5
+	else if (y < 0.6800001 && x >= 17.8103 && x <= 17.9143)
+	{
+	walkingDistanceY = 0.68;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯6
+	else if (y < 0.8100001 && x >= 17.8943 && x <= 18.0003)
+	{
+	walkingDistanceY = 0.81;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯7
+	else if (y < 0.9500001 && x >= 17.9803 && x <= 18.0923)
+	{
+	walkingDistanceY = 0.95;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯8
+	else if (y < 1.0800001 && x >= 18.0723 && x <= 18.3143)
+	{
+	walkingDistanceY = 1.08;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
 	else
 	{
 		return 0;
@@ -1195,9 +1113,478 @@ bool DempApp::haveGround(float x, float y)
 }
 bool DempApp::haveRoof(float x, float y)
 {
+	// 第一個問號 低
+	if (blockRoof(x, y,1.445, 1.635, 0.25, 0.4))
+	{
+		firstlowquestion = 1;
+		return 1;
+	}
+	// 第一個問號 高
+	if (blockRoof(x, y, 1.445, 1.635, 0.8, 0.95))
+	{
+		firsthighquestion = 1;
+		return 1;
+	}
+	// 第二個問號 低
+	if (blockRoof(x, y, 4.856, 5.048, 0.25, 0.4))
+		{
+			secondlowquestion = 1;
+			return 1;
+		}
+	// 第二個問號 高
+	if (blockRoof(x, y, 4.856, 5.048, 0.8, 0.95))
+		{
+			secondhighquestion = 1;
+			return 1;
+		}
+	// 第三個問號 低
+	if (blockRoof(x, y, 5.104, 5.294, 0.25, 0.4))
+	{
+		thirdlowquestion = 1;
+		return 1;
+	}
+	// 第三個問號 高
+	if (blockRoof(x, y, 5.104, 5.294, 0.8, 0.95))
+	{
+		thirdhighquestion = 1;
+		return 1;
+	}
 	return false;
 }
 
+void DempApp::walls()
+{
+	// 螢幕左邊的牆壁 與螢幕中心點相差0.648
+	if (walkingDistanceX < -0.648 + screenmiddle)
+	{
+		walkingDistanceX = -0.647 + screenmiddle;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第一大地板上的水管 左邊
+	else if (walkingDistanceX > 1.102 && walkingDistanceX < 1.122 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
+	{
+		walkingDistanceX = 1.101;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第一大地板上的水管 右邊
+	else if (walkingDistanceX < 1.35 && walkingDistanceX> 1.33 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.4)
+	{
+		walkingDistanceX = 1.351;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第一個問號 低 左邊
+	else if (walkingDistanceX > 1.445 && walkingDistanceX < 1.465 && walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+		walkingDistanceX = 1.444;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第一個問號 低 右邊
+	else if (walkingDistanceX < 1.635 && walkingDistanceX> 1.615 &&  walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+		walkingDistanceX = 1.636;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第一個問號 高 左邊
+	else if (walkingDistanceX > 1.445 && walkingDistanceX < 1.465 && walkingDistanceY >= 0.8 && walkingDistanceY < 1)
+	{
+		walkingDistanceX = 1.444;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第一個問號 高 右邊
+	else if (walkingDistanceX < 1.635 && walkingDistanceX> 1.615 &&  walkingDistanceY >= 0.8 && walkingDistanceY < 1)
+	{
+		walkingDistanceX = 1.636;
+		speed = 0;
+		state = STAND;
+	}
+	// 第一大地板 右邊
+	else if (walkingDistanceX < 2.123 && walkingDistanceX>2.103 &&  walkingDistanceY < 0)
+	{
+		walkingDistanceX = 2.1231;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第二大地板 左邊
+	else if (walkingDistanceX > 2.255 && walkingDistanceX < 2.275 && walkingDistanceY < 0)
+	{
+		walkingDistanceX = 2.254;
+		speed = 0;
+		state = STAND;
+	}
+	// 第二個問號 低 左邊
+	else if (walkingDistanceX > 4.856 && walkingDistanceX < 4.876 && walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+		walkingDistanceX = 4.855;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第二個問號 低 右邊
+	else if (walkingDistanceX < 5.048 && walkingDistanceX> 5.028 &&  walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+		walkingDistanceX = 5.049;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第二個問號 高 左邊
+	else if (walkingDistanceX > 4.856 && walkingDistanceX < 4.876 && walkingDistanceY >= 0.8 && walkingDistanceY < 1)
+	{
+		walkingDistanceX = 4.855;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第二個問號 高 右邊
+	else if (walkingDistanceX < 5.048 && walkingDistanceX> 5.028 &&  walkingDistanceY >= 0.8 && walkingDistanceY < 1)
+	{
+		walkingDistanceX = 5.049;
+		speed = 0;
+		state = STAND;
+	}
+	// 第三個問號 低 左邊
+	else if (walkingDistanceX > 5.104 && walkingDistanceX < 5.124 && walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+		walkingDistanceX = 5.103;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三個問號 低 右邊
+	else if (walkingDistanceX < 5.294 && walkingDistanceX> 5.274 &&  walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+		walkingDistanceX = 5.295;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三個問號 高 左邊
+	else if (walkingDistanceX > 5.104 && walkingDistanceX < 5.124 && walkingDistanceY >= 0.8 && walkingDistanceY < 1)
+	{
+		walkingDistanceX = 5.103;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三個問號 高 右邊
+	else if (walkingDistanceX < 5.294 && walkingDistanceX> 5.274 &&  walkingDistanceY >= 0.8 && walkingDistanceY < 1)
+	{
+		walkingDistanceX = 5.295;
+		speed = 0;
+		state = STAND;
+	}
+	// 第二大地板 右邊
+	else if (walkingDistanceX < 6.149 && walkingDistanceX>6.129 &&  walkingDistanceY < 0)
+	{
+		walkingDistanceX = 6.1491;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三大地板 左邊
+	else if (walkingDistanceX > 6.463 && walkingDistanceX < 6.483 && walkingDistanceY < 0)
+	{
+		walkingDistanceX = 6.462;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三大地板上的撞柱 左邊
+	else if (walkingDistanceX > 8.27 && walkingDistanceX < 8.29 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
+	{
+		walkingDistanceX = 8.269;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三大地板上的撞柱 右邊
+	else if (walkingDistanceX < 8.445 && walkingDistanceX> 8.425 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.4)
+	{
+		walkingDistanceX = 8.4451;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三大地板上的水管 左邊
+	else if (walkingDistanceX > 9.41198 && walkingDistanceX < 9.43198 && walkingDistanceY >= 0 && walkingDistanceY < 0.53)
+	{
+		walkingDistanceX = 9.4119;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三大地板上的水管 右邊
+	else if (walkingDistanceX < 9.66597 && walkingDistanceX> 9.64597 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.53)
+	{
+		walkingDistanceX = 9.666;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三大地板上的水管2 左邊
+	else if (walkingDistanceX > 10.814 && walkingDistanceX < 10.834 && walkingDistanceY >= 0 && walkingDistanceY < 0.53)
+	{
+		walkingDistanceX = 10.813;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三大地板上的水管2 右邊
+	else if (walkingDistanceX < 11.064 && walkingDistanceX> 11.044 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.53)
+	{
+		walkingDistanceX = 11.0641;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三大地板 右邊
+	else if (walkingDistanceX < 12.3651 && walkingDistanceX> 12.3451 &&  walkingDistanceY < 0)
+	{
+		walkingDistanceX = 12.3652;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第四大地板 左邊
+	else if (walkingDistanceX > 12.4981 && walkingDistanceX < 12.5181 && walkingDistanceY < 0)
+	{
+		walkingDistanceX = 12.498;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第四大地板 小水管 左邊
+	else if (walkingDistanceX > 13.528 && walkingDistanceX < 13.548 && walkingDistanceY >= 0 && walkingDistanceY < 0.26)
+	{
+		walkingDistanceX = 13.527;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第四大地板 小水管 右邊
+	else if (walkingDistanceX < 13.778 && walkingDistanceX> 13.758 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.26)
+	{
+		walkingDistanceX = 13.779;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第四大地板 右邊
+	else if (walkingDistanceX < 14.5501 && walkingDistanceX> 14.5301 &&  walkingDistanceY < 0)
+	{
+		walkingDistanceX = 14.5502;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第五大地板 左邊
+	else if (walkingDistanceX > 14.7761 && walkingDistanceX < 14.7961 && walkingDistanceY < 0)
+	{
+		walkingDistanceX = 14.776;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第五大地板 右邊
+	else if (walkingDistanceX < 15.0721 && walkingDistanceX> 15.0521 &&  walkingDistanceY < 0)
+	{
+		walkingDistanceX = 15.0722;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第六大地板 左邊
+	else if (walkingDistanceX > 15.2181 && walkingDistanceX < 15.2381 && walkingDistanceY < 0)
+	{
+		walkingDistanceX = 15.218;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第六大地板 右邊
+	else if (walkingDistanceX < 15.8001 && walkingDistanceX> 15.7801 &&  walkingDistanceY < 0)
+	{
+		walkingDistanceX = 15.8002;
+		speed = 0;
+		state = STAND;
+	}
+	// 第六大地板上的撞柱 左邊
+	else if (walkingDistanceX > 15.8001 && walkingDistanceX < 15.8201 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
+	{
+		walkingDistanceX = 15.8;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第六大地板上的撞柱 右邊
+	else if (walkingDistanceX < 15.9501 && walkingDistanceX> 15.9301 && walkingDistanceY < 0.4)
+	{
+		walkingDistanceX = 15.9511;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 最終大地板 左邊
+	else if (walkingDistanceX > 16.0841 && walkingDistanceX < 16.1041 && walkingDistanceY < 0)
+	{
+		walkingDistanceX = 16.084;
+		speed = 0;
+		state = STAND;
+	}
+	//階梯1
+	else if (walkingDistanceX > 17.462 && walkingDistanceX < 17.482 && walkingDistanceY >= 0 && walkingDistanceY < 0.149)
+	{
+	walkingDistanceX = 17.461;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯2
+	else if (walkingDistanceX > 17.5482 && walkingDistanceX < 17.5682 && walkingDistanceY >= 0 && walkingDistanceY < 0.279)
+	{
+	walkingDistanceX = 17.5481;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯3
+	else if (walkingDistanceX > 17.6322 && walkingDistanceX < 17.6522 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
+	{
+	walkingDistanceX = 17.6321;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯4
+	else if (walkingDistanceX > 17.7202 && walkingDistanceX < 17.7402 && walkingDistanceY >= 0 && walkingDistanceY < 0.54)
+	{
+	walkingDistanceX = 17.7201;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯5
+	else if (walkingDistanceX >	17.8103 && walkingDistanceX < 17.8303 && walkingDistanceY >= 0 && walkingDistanceY < 0.67)
+	{
+	walkingDistanceX = 17.8102;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯6
+	else if (walkingDistanceX > 17.8943 && walkingDistanceX < 17.9143 && walkingDistanceY >= 0 && walkingDistanceY < 0.8099)
+	{
+	walkingDistanceX = 17.8942;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯7
+	else if (walkingDistanceX > 17.9803 && walkingDistanceX < 18.0003 && walkingDistanceY >= 0 && walkingDistanceY < 0.9499)
+	{
+	walkingDistanceX = 17.9802;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯8
+	else if (walkingDistanceX > 18.0723 && walkingDistanceX < 18.0923 && walkingDistanceY >= 0 && walkingDistanceY < 1.079)
+	{
+	walkingDistanceX = 18.0722;
+	speed = 0;
+	state = STAND;
+	}
+	// 大階梯 右邊
+	else if (walkingDistanceX < 18.3364 && walkingDistanceX> 18.3164 && walkingDistanceY < 1.079)
+	{
+	walkingDistanceX = 18.3365;
+	speed = 0;
+	state = STAND;
+	}
+	else if (LeftButtonDown == true || RightButtonDown == true)
+	{
+	state = WALKING;
+	}
+
+
+	//旗子
+	if (walkingDistanceX >= 18.9462 && walkingDistanceX < 18.9662)
+	{
+		if (walkingDistanceY < 0.15)	//旗子下的小方塊
+		{
+			walkingDistanceX = 18.9461;
+			speed = 0;
+			state = STAND;
+		}
+		else
+		{
+			endGame = 1;
+			LeftButtonDown = false;
+			RightButtonDown = false;
+			state = STAND;
+			speed = 0;
+			controlAble = 0;
+		}
+
+	}
+
+
+
+	// 最右邊的牆壁
+	if (walkingDistanceX > 20.072)
+	{
+		walkingDistanceX = 20.071;
+		speed = 0;
+		state = STAND;
+	}
+}
+
+void DempApp::renderBlock(float x, float y, bool used)
+{
+	if (!used)
+	{
+		glPushMatrix();
+		glTranslated(-0.305, -0.7, 0);
+		glBindTexture(GL_TEXTURE_2D, m_question1);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0, 0); glVertex2d(-0.05 + x, -0.05 + y);
+		glTexCoord2d(1, 0); glVertex2d(0.05 + x, -0.05 + y);
+		glTexCoord2d(1, 1); glVertex2d(0.05 + x, 0.1 + y);
+		glTexCoord2d(0, 1); glVertex2d(-0.05 + x, 0.1 + y);
+		glEnd();
+		glPopMatrix();
+	}
+	else
+	{
+		glPushMatrix();
+		glTranslated(-0.305, -0.7, 0);
+		glBindTexture(GL_TEXTURE_2D, m_question2);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0, 0); glVertex2d(-0.05 + x, -0.05 + y);
+		glTexCoord2d(1, 0); glVertex2d(0.05 + x, -0.05 + y);
+		glTexCoord2d(1, 1); glVertex2d(0.05 + x, 0.1 + y);
+		glTexCoord2d(0, 1); glVertex2d(-0.05 + x, 0.1 + y);
+		glEnd();
+		glPopMatrix();
+	}
+}
+
+bool DempApp::blockRoof(float x, float y, float x1,float x2, float y1, float y2)
+{
+	if (y > y1 && y < y2+0.000001 && x >= x1 && x <= x2)
+	{
+		risingSpeed = 2;
+		falltimer = 0;
+		return 1;
+	}
+	return 0;
+}
 
 unsigned int DempApp::loadTexture(std::string path, int imageType)
 {
