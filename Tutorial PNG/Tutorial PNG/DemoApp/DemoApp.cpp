@@ -45,6 +45,7 @@ void DempApp::Initialize()
 	InitGlutInput::Initialize();
 	m_Coin = TextureApp::GenTexture("Media\\Texture\\coin.png");
 	m_Background = TextureApp::GenTexture("Media\\Texture\\ourmap.png");
+	//m_Mario = DempApp::loadTexture("Media\\Texture\\Mario2.png",GL_RGBA);
 	m_Mario = TextureApp::GenTexture("Media\\Texture\\Mario2.png");
 	m_Start = TextureApp::GenTexture("Media\\Texture\\startpage.jpg");
 	m_End = TextureApp::GenTexture("Media\\Texture\\gameover.jpg");
@@ -56,49 +57,20 @@ void DempApp::Initialize()
 	m_FlowerOpen = TextureApp::GenTexture("Media\\Texture\\flowerOpen.png");
 	m_FlowerClose = TextureApp::GenTexture("Media\\Texture\\flowerClose.png");
 
-	ShaderInfo shaders[] = {
-		{ GL_VERTEX_SHADER, "Mario.vs" },//vertex shader
-		{ GL_FRAGMENT_SHADER, "Mario.fs" },//fragment shader
-		{ GL_NONE, NULL } };
-	program = LoadShaders(shaders);//讀取shader
-	glUseProgram(program);//uniform參數數值前必須先use shader
+	m_Pipe = TextureApp::GenTexture("Media\\Texture\\Pipe.png");
 
-	float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-		// positions   // texCoords
-		-1.0f,  1.0f,  0.0f, 1.0f,
-		-1.0f, -1.0f,  0.0f, 0.0f,
-		 1.0f, -1.0f,  1.0f, 0.0f,
+	//ShaderInfo shaders[] = {
+	//	{ GL_VERTEX_SHADER, "Mario.vs" },//vertex shader
+	//	{ GL_FRAGMENT_SHADER, "Mario.fs" },//fragment shader
+	//	{ GL_NONE, NULL } };
+	//program = LoadShaders(shaders);//讀取shader
+	//glUseProgram(program);//uniform參數數值前必須先use shader
 
-		-1.0f,  1.0f,  0.0f, 1.0f,
-		 1.0f, -1.0f,  1.0f, 0.0f,
-		 1.0f,  1.0f,  1.0f, 1.0f
-	};
-	glGenVertexArrays(1, &quadVAO);
-	glGenBuffers(1, &quadVBO);
-	glBindVertexArray(quadVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	//m_Mario = TextureApp::GenTexture("Media\\Texture\\Mario2.png");
+	//glBindTexture(GL_TEXTURE_2D, m_Mario);
+	////glActiveTexture(GL_TEXTURE0);
+	////glDrawArrays(GL_TRIANGLE_STRIP,0,4);
 
-	glGenFramebuffers(1, &framebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-	// create a color attachment texture
-
-	glGenTextures(1, &textureColorbuffer);
-	glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
-	// create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
-	unsigned int rbo;
-	glGenRenderbuffers(1, &rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600); // use a single renderbuffer object for both a depth AND stencil buffer.
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
 }
 
 void DempApp::Finalize()
@@ -106,10 +78,10 @@ void DempApp::Finalize()
 	glDeleteTextures(1, &m_Coin);
 }
 
-float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight=0, startrange = 0.7;
-int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove=0;
+float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight = 0, startrange = 0.7;
+int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove = 0;
 bool controlAble = 0,//1可控制 0不可
-		endGame=0;
+endGame = 0;
 void DempApp::Display(bool auto_redraw)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -117,6 +89,7 @@ void DempApp::Display(bool auto_redraw)
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	if (startGame == 0)
 	{
 		glPushMatrix();
@@ -135,10 +108,10 @@ void DempApp::Display(bool auto_redraw)
 		glTranslated(-0.305, -0.7, 0);
 		glBindTexture(GL_TEXTURE_2D, m_Mario);
 		glBegin(GL_QUADS);
-		glTexCoord2d(0.458333, 0.91098); glVertex2d(-0.05, -0.05+startrange);
+		glTexCoord2d(0.458333, 0.91098); glVertex2d(-0.05, -0.05 + startrange);
 		glTexCoord2d(0.497395, 0.91098); glVertex2d(0.05, -0.05 + startrange);
 		glTexCoord2d(0.497395, 0.9385); glVertex2d(0.05, 0.1 + startrange);
-		glTexCoord2d(0.458333, 0.9385); glVertex2d(-0.05,0.1 + startrange);
+		glTexCoord2d(0.458333, 0.9385); glVertex2d(-0.05, 0.1 + startrange);
 		glEnd();
 		glPopMatrix();
 
@@ -211,7 +184,7 @@ void DempApp::Display(bool auto_redraw)
 			RightButtonDown = FALSE;
 		}
 		starttimer++;
-		
+
 		if (starttimer > 60)
 		{
 			startrange -= 0.01;
@@ -256,10 +229,10 @@ void DempApp::Display(bool auto_redraw)
 			glTranslated(-0.305, -0.7, 0);
 			glBindTexture(GL_TEXTURE_2D, m_FlowerOpen);
 			glBegin(GL_QUADS);
-			glTexCoord2d(0, 0); glVertex2d(1.181, 0.36);
-			glTexCoord2d(1, 0); glVertex2d(1.281, 0.36);
-			glTexCoord2d(1, 1); glVertex2d(1.281, 0.61);
-			glTexCoord2d(0, 1); glVertex2d(1.181, 0.61);
+			glTexCoord2d(0, 0); glVertex2d(13.607, 0.22);
+			glTexCoord2d(1, 0); glVertex2d(13.707, 0.22);
+			glTexCoord2d(1, 1); glVertex2d(13.707, 0.47);
+			glTexCoord2d(0, 1); glVertex2d(13.607, 0.47);
 			glEnd();
 			glPopMatrix();
 			flowerMove++;
@@ -270,10 +243,10 @@ void DempApp::Display(bool auto_redraw)
 			glTranslated(-0.305, -0.7, 0);
 			glBindTexture(GL_TEXTURE_2D, m_FlowerClose);
 			glBegin(GL_QUADS);
-			glTexCoord2d(0, 0); glVertex2d(1.181, 0.36);
-			glTexCoord2d(1, 0); glVertex2d(1.281, 0.36);
-			glTexCoord2d(1, 1); glVertex2d(1.281, 0.61);
-			glTexCoord2d(0, 1); glVertex2d(1.181, 0.61);
+			glTexCoord2d(0, 0); glVertex2d(13.607, 0.22);
+			glTexCoord2d(1, 0); glVertex2d(13.707, 0.22);
+			glTexCoord2d(1, 1); glVertex2d(13.707, 0.47);
+			glTexCoord2d(0, 1); glVertex2d(13.607, 0.47);
 			glEnd();
 			glPopMatrix();
 			flowerMove++;
@@ -281,8 +254,17 @@ void DempApp::Display(bool auto_redraw)
 				flowerMove = 0;
 		}
 
-
-
+		//// 水管
+		//glPushMatrix();
+		//glScaled(0.2, 0.2, 0);
+		//glBindTexture(GL_TEXTURE_2D, m_Pipe);
+		//glBegin(GL_QUADS);
+		//glTexCoord2d(0, 0); glVertex2d(0.32, 0);
+		//glTexCoord2d(1, 0); glVertex2d(0.64, 0);
+		//glTexCoord2d(1, 1); glVertex2d(0.64, 0.64);
+		//glTexCoord2d(0, 1); glVertex2d(0.32, 0.64);
+		//glEnd();
+		//glPopMatrix();
 
 		timer++;
 
@@ -299,7 +281,7 @@ void DempApp::Display(bool auto_redraw)
 		std::cout << "risingSpeed: " << risingSpeed << std::endl;
 		if (die == 1)
 		{
-			if(lives>0)
+			if (lives > 0)
 			{
 				dietimer++;
 				if (dietimer > 120)
@@ -449,6 +431,22 @@ void DempApp::Display(bool auto_redraw)
 				state = STAND;
 			}
 
+			// 第四大地板 小水管 左邊
+			else if (walkingDistanceX > 13.528 && walkingDistanceX < 13.548 && walkingDistanceY >= 0 && walkingDistanceY < 0.26)
+			{
+				walkingDistanceX = 13.527;
+				speed = 0;
+				state = STAND;
+			}
+
+			// 第四大地板 小水管 右邊
+			else if (walkingDistanceX < 13.778 && walkingDistanceX> 13.758 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.26)
+			{
+				walkingDistanceX = 13.779;
+				speed = 0;
+				state = STAND;
+			}
+
 			// 第四大地板 右邊
 			else if (walkingDistanceX < 14.5501 && walkingDistanceX> 14.5301 &&  walkingDistanceY < 0)
 			{
@@ -491,17 +489,17 @@ void DempApp::Display(bool auto_redraw)
 			// 第六大地板上的撞柱 左邊
 			else if (walkingDistanceX > 15.8001 && walkingDistanceX < 15.8201 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
 			{
-			walkingDistanceX = 15.8;
-			speed = 0;
-			state = STAND;
+				walkingDistanceX = 15.8;
+				speed = 0;
+				state = STAND;
 			}
 
 			// 第六大地板上的撞柱 右邊
 			else if (walkingDistanceX < 15.9501 && walkingDistanceX> 15.9301 && walkingDistanceY < 0.4)
 			{
-			walkingDistanceX = 15.9511;
-			speed = 0;
-			state = STAND;
+				walkingDistanceX = 15.9511;
+				speed = 0;
+				state = STAND;
 			}
 
 			// 最終大地板 左邊
@@ -553,7 +551,7 @@ void DempApp::Display(bool auto_redraw)
 				inair = STANDING;
 				jumpGroundHeight = walkingDistanceY;
 			}
-			else if (inair != RISING && inair!=FALLING)
+			else if (inair != RISING && inair != FALLING)
 			{
 				risingSpeed = 2;
 				inair = FALLING;
@@ -728,7 +726,7 @@ void DempApp::Display(bool auto_redraw)
 			timer = 0;
 		}
 	}
-	
+
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
 	InitOpenGLApp::Display(false);
@@ -746,7 +744,18 @@ void DempApp::Update()
 
 void DempApp::KeyPress(int key)
 {
-
+	InitGlutInput::KeyPress(key);
+	if (controlAble)
+	{
+		if (key == 'i')
+		{
+			walkingDistanceY += 0.01;
+		}
+		if (key == 'k')
+		{
+			walkingDistanceY -= 0.01;
+		}
+	}
 }
 
 void DempApp::KeyDown(int key)
@@ -794,7 +803,7 @@ void DempApp::KeyDown(int key)
 		}
 	}
 
-	
+
 }
 
 void DempApp::KeyUp(int key)
@@ -1067,7 +1076,7 @@ void DempApp::renderFlag(int dir)
 bool DempApp::haveGround(float x, float y)
 {
 	// 第一大地板上的水管
-	if (y<0.4100001 && x>= 1.102 && x<= 1.35)
+	if (y < 0.4100001 && x >= 1.102 && x <= 1.35)
 	{
 		walkingDistanceY = 0.41;
 		risingSpeed = 5;
@@ -1132,6 +1141,15 @@ bool DempApp::haveGround(float x, float y)
 		falltimer = 0;
 		return 1;
 	}
+	//第四大地板 小水管
+	else if (y < 0.2700001 && x >= 13.528 && x <= 13.778)
+	{
+		walkingDistanceY = 0;
+		walkingDistanceY = 0.27;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
 	// 第五大地板
 	else if (y <= 0 && x >= 14.7761&&x <= 15.0721)
 	{
@@ -1175,31 +1193,27 @@ bool DempApp::haveRoof(float x, float y)
 }
 
 
-unsigned int loadCubemap(std::string faces)
+unsigned int DempApp::loadTexture(std::string path, int imageType)
 {
 	unsigned int textureID;
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-
-	int width, height, nrChannels;
-	
-		unsigned char *data = stbi_load(faces.c_str(), &width, &height, &nrChannels, 0);
-		if (data)
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-			stbi_image_free(data);
-		}
-		else
-		{
-			std::cout << "Cubemap texture failed to load at path: " << faces << std::endl;
-			stbi_image_free(data);
-		}
-	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
+	int width, height, nrComponents;
+	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, imageType, width, height, 0, imageType, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		stbi_image_free(data);
+	}
+	else
+	{
+		std::cout << "texture failed to load at path: " << path << std::endl;
+		stbi_image_free(data);
+	}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	return textureID;
 }

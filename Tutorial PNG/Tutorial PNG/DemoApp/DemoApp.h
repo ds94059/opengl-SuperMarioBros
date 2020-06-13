@@ -3,7 +3,9 @@
 #include "InitGlutInput.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <string>
 using namespace glm;
+
 
 
 class DempApp : 
@@ -24,6 +26,10 @@ private:
 	GLuint m_X;
 	GLuint m_FlowerOpen;
 	GLuint m_FlowerClose;
+	GLuint m_Pipe;
+
+	// uniform parameter
+	GLuint Mario_uniform;
 public:
 	DempApp(void);
 	~DempApp(void);
@@ -44,6 +50,7 @@ protected:
 	void renderFlag(int dir);
 	bool haveGround(float x, float y);
 	bool haveRoof(float x, float y);
+	unsigned int loadTexture(std::string path, int imageType);
 private:
 };
 
