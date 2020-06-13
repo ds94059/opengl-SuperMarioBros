@@ -51,6 +51,7 @@ protected:
 	void renderFlag(int dir);
 	bool haveGround(float x, float y);
 	bool haveRoof(float x, float y);
+	void walls();
 	unsigned int loadTexture(std::string path, int imageType);
 private:
 };
