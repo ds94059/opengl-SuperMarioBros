@@ -49,6 +49,8 @@ protected:
 	void renderSlide(int dir);
 	void renderJump(int dir);
 	void renderFlag(int dir);
+	void renderBlock(float x, float y, bool used);
+	bool blockRoof(float x, float y, float xl, float x2, float y1, float y2);
 	bool haveGround(float x, float y);
 	bool haveRoof(float x, float y);
 	void walls();

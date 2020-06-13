@@ -84,7 +84,7 @@ float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 
 int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove = 0;
 bool controlAble = 0,//1可控制 0不可
 endGame = 0;
-bool firstlowquestion = 0, firsthighquestion=0;
+bool firstlowquestion = 0, firsthighquestion=0, secondlowquestion = 0, secondhighquestion = 0, thirdlowquestion = 0, thirdhighquestion = 0, fourthquestion1 = 0;
 void DempApp::Display(bool auto_redraw)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -184,6 +184,11 @@ void DempApp::Display(bool auto_redraw)
 			die = 0;
 			firstlowquestion = 0;
 			firsthighquestion = 0;
+			secondlowquestion = 0;
+			secondhighquestion = 0;
+			thirdlowquestion = 0;
+			thirdhighquestion = 0;
+			fourthquestion1 = 0;
 			state = STANDING;
 			LeftButtonDown = FALSE;
 			RightButtonDown = FALSE;
@@ -259,60 +264,28 @@ void DempApp::Display(bool auto_redraw)
 				flowerMove = 0;
 		}
 		// 第一個問號 低
-		if (!firstlowquestion)
-		{
-			glPushMatrix();
-			glTranslated(-0.305, -0.7, 0);
-			glBindTexture(GL_TEXTURE_2D, m_question1);
-			glBegin(GL_QUADS);
-			glTexCoord2d(0, 0); glVertex2d(-0.05 + 1.539, -0.05 + 0.4);
-			glTexCoord2d(1, 0); glVertex2d(0.05 + 1.539, -0.05 + 0.4);
-			glTexCoord2d(1, 1); glVertex2d(0.05 + 1.539, 0.1 + 0.4);
-			glTexCoord2d(0, 1); glVertex2d(-0.05 + 1.539, 0.1 + 0.4);
-			glEnd();
-			glPopMatrix();
-		}
-		else
-		{
-			glPushMatrix();
-			glTranslated(-0.305, -0.7, 0);
-			glBindTexture(GL_TEXTURE_2D, m_question2);
-			glBegin(GL_QUADS);
-			glTexCoord2d(0, 0); glVertex2d(-0.05 + 1.539, -0.05 + 0.4);
-			glTexCoord2d(1, 0); glVertex2d(0.05 + 1.539, -0.05 + 0.4);
-			glTexCoord2d(1, 1); glVertex2d(0.05 + 1.539, 0.1 + 0.4);
-			glTexCoord2d(0, 1); glVertex2d(-0.05 + 1.539, 0.1 + 0.4);
-			glEnd();
-			glPopMatrix();
-		}
-
+		renderBlock(1.539, 0.4, firstlowquestion);
 		// 第一個問號 高
-		if (!firsthighquestion)
-		{
-			glPushMatrix();
-			glTranslated(-0.305, -0.7, 0);
-			glBindTexture(GL_TEXTURE_2D, m_question1);
-			glBegin(GL_QUADS);
-			glTexCoord2d(0, 0); glVertex2d(-0.05 + 1.539, -0.05 + 0.95);
-			glTexCoord2d(1, 0); glVertex2d(0.05 + 1.539, -0.05 + 0.95);
-			glTexCoord2d(1, 1); glVertex2d(0.05 + 1.539, 0.1 + 0.95);
-			glTexCoord2d(0, 1); glVertex2d(-0.05 + 1.539, 0.1 + 0.95);
-			glEnd();
-			glPopMatrix();
-		}
-		else
-		{
-			glPushMatrix();
-			glTranslated(-0.305, -0.7, 0);
-			glBindTexture(GL_TEXTURE_2D, m_question2);
-			glBegin(GL_QUADS);
-			glTexCoord2d(0, 0); glVertex2d(-0.05 + 1.539, -0.05 + 0.95);
-			glTexCoord2d(1, 0); glVertex2d(0.05 + 1.539, -0.05 + 0.95);
-			glTexCoord2d(1, 1); glVertex2d(0.05 + 1.539, 0.1 + 0.95);
-			glTexCoord2d(0, 1); glVertex2d(-0.05 + 1.539, 0.1 + 0.95);
-			glEnd();
-			glPopMatrix();
-		}
+		renderBlock(1.539, 0.95, firsthighquestion);
+
+		// 第二個問號 低
+		renderBlock(4.952, 0.4, secondlowquestion);
+		// 第二個問號 高
+		renderBlock(4.952, 0.95, secondhighquestion);
+
+		// 第三個問號 低
+		renderBlock(5.2, 0.4, thirdlowquestion);
+		// 第三個問號 高
+		renderBlock(5.2, 0.95, thirdhighquestion);
+
+		//第四個問號1
+		renderBlock(7.219, 0.4, fourthquestion1);
+		//第四個問號2
+		renderBlock(7.319, 0.4, fourthquestion1);
+		//第四個問號3
+		renderBlock(7.419, 0.4, fourthquestion1);
+		//第四個問號4
+		renderBlock(7.519, 0.4, fourthquestion1);
 
 		//// 水管
 		//glPushMatrix();
@@ -389,7 +362,7 @@ void DempApp::Display(bool auto_redraw)
 			{
 				inair = FALLING;
 			}
-
+			
 			if (inair == RISING)
 			{
 				if (UpButtonDown)
@@ -940,6 +913,38 @@ bool DempApp::haveGround(float x, float y)
 		falltimer = 0;
 		return 1;
 	}
+	// 第二個問號 低
+	else	if (y > 0.4 && y < 0.5500001 && x >= 4.856 && x <= 5.048)
+	{
+		walkingDistanceY = 0.55;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
+	// 第二個問號 高
+	else	if (y > 0.95 && y < 1.100001 && x >= 4.856 && x <= 5.048)
+	{
+		walkingDistanceY = 1.1;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
+	// 第三個問號 低
+	else	if (y > 0.4 && y < 0.5500001 && x >= 5.104 && x <= 5.294)
+	{
+		walkingDistanceY = 0.55;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
+	// 第三個問號 高
+	else	if (y > 0.95 && y < 1.100001 && x >= 5.104 && x <= 5.294)
+	{
+		walkingDistanceY = 1.1;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
 	// 第二大地板
 	else if (y <= 0 && x >= 2.255&&x <= 6.149)
 	{
@@ -1103,18 +1108,39 @@ bool DempApp::haveGround(float x, float y)
 bool DempApp::haveRoof(float x, float y)
 {
 	// 第一個問號 低
-	if (y > 0.25 && y < 0.400001 && x >= 1.445 && x <= 1.635)
-		{
+	if (blockRoof(x, y,1.445, 1.635, 0.25, 0.4))
+	{
 		firstlowquestion = 1;
-		risingSpeed = 2;
-		falltimer = 0;
 		return 1;
-		}
-	else if (y > 0.8 && y < 0.9500001 && x >= 1.445 && x <= 1.635)
+	}
+	// 第一個問號 高
+	if (blockRoof(x, y, 1.445, 1.635, 0.8, 0.95))
 	{
 		firsthighquestion = 1;
-		risingSpeed = 2;
-		falltimer = 0;
+		return 1;
+	}
+	// 第二個問號 低
+	if (blockRoof(x, y, 4.856, 5.048, 0.25, 0.4))
+		{
+			secondlowquestion = 1;
+			return 1;
+		}
+	// 第二個問號 高
+	if (blockRoof(x, y, 4.856, 5.048, 0.8, 0.95))
+		{
+			secondhighquestion = 1;
+			return 1;
+		}
+	// 第三個問號 低
+	if (blockRoof(x, y, 5.104, 5.294, 0.25, 0.4))
+	{
+		thirdlowquestion = 1;
+		return 1;
+	}
+	// 第三個問號 高
+	if (blockRoof(x, y, 5.104, 5.294, 0.8, 0.95))
+	{
+		thirdhighquestion = 1;
 		return 1;
 	}
 	return false;
@@ -1192,7 +1218,68 @@ void DempApp::walls()
 		speed = 0;
 		state = STAND;
 	}
+	// 第二個問號 低 左邊
+	else if (walkingDistanceX > 4.856 && walkingDistanceX < 4.876 && walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+		walkingDistanceX = 4.855;
+		speed = 0;
+		state = STAND;
+	}
 
+	// 第二個問號 低 右邊
+	else if (walkingDistanceX < 5.048 && walkingDistanceX> 5.028 &&  walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+		walkingDistanceX = 5.049;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第二個問號 高 左邊
+	else if (walkingDistanceX > 4.856 && walkingDistanceX < 4.876 && walkingDistanceY >= 0.8 && walkingDistanceY < 1)
+	{
+		walkingDistanceX = 4.855;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第二個問號 高 右邊
+	else if (walkingDistanceX < 5.048 && walkingDistanceX> 5.028 &&  walkingDistanceY >= 0.8 && walkingDistanceY < 1)
+	{
+		walkingDistanceX = 5.049;
+		speed = 0;
+		state = STAND;
+	}
+	// 第三個問號 低 左邊
+	else if (walkingDistanceX > 5.104 && walkingDistanceX < 5.124 && walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+		walkingDistanceX = 5.103;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三個問號 低 右邊
+	else if (walkingDistanceX < 5.294 && walkingDistanceX> 5.274 &&  walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+		walkingDistanceX = 5.295;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三個問號 高 左邊
+	else if (walkingDistanceX > 5.104 && walkingDistanceX < 5.124 && walkingDistanceY >= 0.8 && walkingDistanceY < 1)
+	{
+		walkingDistanceX = 5.103;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第三個問號 高 右邊
+	else if (walkingDistanceX < 5.294 && walkingDistanceX> 5.274 &&  walkingDistanceY >= 0.8 && walkingDistanceY < 1)
+	{
+		walkingDistanceX = 5.295;
+		speed = 0;
+		state = STAND;
+	}
 	// 第二大地板 右邊
 	else if (walkingDistanceX < 6.149 && walkingDistanceX>6.129 &&  walkingDistanceY < 0)
 	{
@@ -1452,6 +1539,46 @@ void DempApp::walls()
 	}
 }
 
+void DempApp::renderBlock(float x, float y, bool used)
+{
+	if (!used)
+	{
+		glPushMatrix();
+		glTranslated(-0.305, -0.7, 0);
+		glBindTexture(GL_TEXTURE_2D, m_question1);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0, 0); glVertex2d(-0.05 + x, -0.05 + y);
+		glTexCoord2d(1, 0); glVertex2d(0.05 + x, -0.05 + y);
+		glTexCoord2d(1, 1); glVertex2d(0.05 + x, 0.1 + y);
+		glTexCoord2d(0, 1); glVertex2d(-0.05 + x, 0.1 + y);
+		glEnd();
+		glPopMatrix();
+	}
+	else
+	{
+		glPushMatrix();
+		glTranslated(-0.305, -0.7, 0);
+		glBindTexture(GL_TEXTURE_2D, m_question2);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0, 0); glVertex2d(-0.05 + x, -0.05 + y);
+		glTexCoord2d(1, 0); glVertex2d(0.05 + x, -0.05 + y);
+		glTexCoord2d(1, 1); glVertex2d(0.05 + x, 0.1 + y);
+		glTexCoord2d(0, 1); glVertex2d(-0.05 + x, 0.1 + y);
+		glEnd();
+		glPopMatrix();
+	}
+}
+
+bool DempApp::blockRoof(float x, float y, float x1,float x2, float y1, float y2)
+{
+	if (y > y1 && y < y2+0.000001 && x >= x1 && x <= x2)
+	{
+		risingSpeed = 2;
+		falltimer = 0;
+		return 1;
+	}
+	return 0;
+}
 
 unsigned int DempApp::loadTexture(std::string path, int imageType)
 {
