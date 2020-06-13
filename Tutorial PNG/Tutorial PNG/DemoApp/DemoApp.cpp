@@ -1031,6 +1031,70 @@ bool DempApp::haveGround(float x, float y)
 		falltimer = 0;
 		return 1;
 	}
+	// 階梯1
+	else if (y < 0.1500001 && x >= 17.462 && x <= 17.5682)
+	{
+	walkingDistanceY = 0.15;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯2
+	else if (y < 0.2800001 && x >= 17.5482 && x <= 17.6522)
+	{
+	walkingDistanceY = 0.28;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯3
+	else if (y < 0.4100001 && x >= 17.6322 && x <= 17.7402)
+	{
+	walkingDistanceY = 0.41;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯4
+	else if (y < 0.5500001 && x >= 17.7202 && x <=17.8303)
+	{
+	walkingDistanceY = 0.55;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯5
+	else if (y < 0.6800001 && x >= 17.8103 && x <= 17.9143)
+	{
+	walkingDistanceY = 0.68;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯6
+	else if (y < 0.8100001 && x >= 17.8943 && x <= 18.0003)
+	{
+	walkingDistanceY = 0.81;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯7
+	else if (y < 0.9500001 && x >= 17.9803 && x <= 18.0923)
+	{
+	walkingDistanceY = 0.95;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
+	// 階梯8
+	else if (y < 1.0800001 && x >= 18.0723 && x <= 18.3143)
+	{
+	walkingDistanceY = 1.08;
+	risingSpeed = 5;
+	falltimer = 0;
+	return 1;
+	}
 	else
 	{
 		return 0;
@@ -1287,10 +1351,75 @@ void DempApp::walls()
 		speed = 0;
 		state = STAND;
 	}
+	//階梯1
+	else if (walkingDistanceX > 17.462 && walkingDistanceX < 17.482 && walkingDistanceY >= 0 && walkingDistanceY < 0.149)
+	{
+	walkingDistanceX = 17.461;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯2
+	else if (walkingDistanceX > 17.5482 && walkingDistanceX < 17.5682 && walkingDistanceY >= 0 && walkingDistanceY < 0.279)
+	{
+	walkingDistanceX = 17.5481;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯3
+	else if (walkingDistanceX > 17.6322 && walkingDistanceX < 17.6522 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
+	{
+	walkingDistanceX = 17.6321;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯4
+	else if (walkingDistanceX > 17.7202 && walkingDistanceX < 17.7402 && walkingDistanceY >= 0 && walkingDistanceY < 0.54)
+	{
+	walkingDistanceX = 17.7201;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯5
+	else if (walkingDistanceX >	17.8103 && walkingDistanceX < 17.8303 && walkingDistanceY >= 0 && walkingDistanceY < 0.67)
+	{
+	walkingDistanceX = 17.8102;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯6
+	else if (walkingDistanceX > 17.8943 && walkingDistanceX < 17.9143 && walkingDistanceY >= 0 && walkingDistanceY < 0.8099)
+	{
+	walkingDistanceX = 17.8942;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯7
+	else if (walkingDistanceX > 17.9803 && walkingDistanceX < 18.0003 && walkingDistanceY >= 0 && walkingDistanceY < 0.9499)
+	{
+	walkingDistanceX = 17.9802;
+	speed = 0;
+	state = STAND;
+	}
+	//階梯8
+	else if (walkingDistanceX > 18.0723 && walkingDistanceX < 18.0923 && walkingDistanceY >= 0 && walkingDistanceY < 1.079)
+	{
+	walkingDistanceX = 18.0722;
+	speed = 0;
+	state = STAND;
+	}
+	// 大階梯 右邊
+	else if (walkingDistanceX < 18.3364 && walkingDistanceX> 18.3164 && walkingDistanceY < 1.079)
+	{
+	walkingDistanceX = 18.3365;
+	speed = 0;
+	state = STAND;
+	}
 	else if (LeftButtonDown == true || RightButtonDown == true)
 	{
-		state = WALKING;
+	state = WALKING;
 	}
+
+
 	//旗子
 	if (walkingDistanceX >= 18.9462 && walkingDistanceX < 18.9662)
 	{
