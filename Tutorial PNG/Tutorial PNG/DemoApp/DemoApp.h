@@ -27,7 +27,8 @@ private:
 	GLuint m_FlowerOpen;
 	GLuint m_FlowerClose;
 	GLuint m_Pipe;
-
+	GLuint m_question1;
+	GLuint m_question2;
 	// uniform parameter
 	GLuint Mario_uniform;
 public:

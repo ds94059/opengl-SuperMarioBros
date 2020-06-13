@@ -57,6 +57,8 @@ void DempApp::Initialize()
 	m_FlowerOpen = TextureApp::GenTexture("Media\\Texture\\flowerOpen.png");
 	m_FlowerClose = TextureApp::GenTexture("Media\\Texture\\flowerClose.png");
 
+	m_question1 = TextureApp::GenTexture("Media\\Texture\\questionblock.png");
+
 	m_Pipe = TextureApp::GenTexture("Media\\Texture\\Pipe.png");
 
 	//ShaderInfo shaders[] = {
@@ -89,7 +91,7 @@ void DempApp::Display(bool auto_redraw)
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	if (startGame == 0)
 	{
 		glPushMatrix();
@@ -253,6 +255,17 @@ void DempApp::Display(bool auto_redraw)
 			if (flowerMove > 20)
 				flowerMove = 0;
 		}
+		// 第一個問號
+		/*glPushMatrix();
+		glTranslated(-0.305, -0.7, 0);
+		glBindTexture(GL_TEXTURE_2D, m_question1);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0, 0); glVertex2d(13.607, 0.22);
+		glTexCoord2d(1, 0); glVertex2d(13.707, 0.22);
+		glTexCoord2d(1, 1); glVertex2d(13.707, 0.47);
+		glTexCoord2d(0, 1); glVertex2d(13.607, 0.47);
+		glEnd();
+		glPopMatrix();*/
 
 		//// 水管
 		//glPushMatrix();
@@ -555,6 +568,10 @@ void DempApp::Display(bool auto_redraw)
 			{
 				risingSpeed = 2;
 				inair = FALLING;
+			}
+			else if(inair == RISING)
+			{
+				
 			}
 
 			if (inair == RISING)
