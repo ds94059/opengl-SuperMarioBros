@@ -110,8 +110,8 @@ int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, 
 int hit = 0;
 bool controlAble = 0,//1可控制 0不可
 endGame = 0, isGrowing = false;
-bool firstlowquestion = 0, firsthighquestion = 0, secondlowquestion = 0, secondhighquestion = 0, thirdlowquestion = 0, thirdhighquestion = 0, 
-fourthquestion1 = 0, fourthquestion2 = 0, fourthquestion3 = 0, fourthquestion4 = 0;
+bool firstlowquestion = 0, firsthighquestion = 0, secondlowquestion = 0, secondhighquestion = 0, thirdlowquestion = 0, thirdhighquestion = 0,
+fourthquestion1 = 0, fourthquestion2 = 0, fourthquestion3 = 0, fourthquestion4 = 0, fifthquestion[12] = { 0 };
 
 void DempApp::Display(bool auto_redraw)
 {
@@ -120,6 +120,8 @@ void DempApp::Display(bool auto_redraw)
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	/*glEnable(GL_ALPHA_TEST);
+	glAlphaFunc(GL_GREATER, 0.1);*/
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	if (startGame == 0)
 	{
@@ -219,6 +221,8 @@ void DempApp::Display(bool auto_redraw)
 			fourthquestion2 = 0;
 			fourthquestion3 = 0;
 			fourthquestion4 = 0;
+			for (int i = 0; i < 12; i++)
+				fifthquestion[i] = 0;
 			state = STANDING;
 			LeftButtonDown = FALSE;
 			RightButtonDown = FALSE;
@@ -315,6 +319,23 @@ void DempApp::Display(bool auto_redraw)
 		renderBlock(7.419, 0.4, fourthquestion3);
 		//第四個問號4
 		renderBlock(7.519, 0.4, fourthquestion4);
+
+		//第五個問號0-7 低
+		renderBlock(12.075, 0.4, fifthquestion[0]);
+		renderBlock(12.175, 0.4, fifthquestion[1]);
+		renderBlock(12.275, 0.4, fifthquestion[2]);
+		renderBlock(12.375, 0.4, fifthquestion[3]);
+		renderBlock(12.475, 0.4, fifthquestion[4]);
+		renderBlock(12.575, 0.4, fifthquestion[5]);
+		renderBlock(12.675, 0.4, fifthquestion[6]);
+		renderBlock(12.775, 0.4, fifthquestion[7]);
+
+		//第五個問號8-11 高
+		renderBlock(12.275, 0.95, fifthquestion[8]);
+		renderBlock(12.375, 0.95, fifthquestion[9]);
+		renderBlock(12.475, 0.95, fifthquestion[10]);
+		renderBlock(12.575, 0.95, fifthquestion[11]);
+
 
 		//// 水管
 		//glPushMatrix();
@@ -562,6 +583,7 @@ void DempApp::Display(bool auto_redraw)
 		}*/
 	}
 
+	//glDisable(GL_ALPHA_TEST);
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
 	InitOpenGLApp::Display(false);
@@ -983,9 +1005,25 @@ bool DempApp::haveGround(float x, float y)
 		return 1;
 	}
 	// 第四個問號們
-	else	if (y > 0.4 && y < 0.5500001 && x >= 7.124 && x <= 7.618)
+	else if (y > 0.4 && y < 0.5500001 && x >= 7.124 && x <= 7.618)
 	{
 		walkingDistanceY = 0.55;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
+	// 第五個問號們 低
+	else if (y > 0.4 && y < 0.5500001 && x >= 11.989 && x <= 12.86)
+	{
+		walkingDistanceY = 0.55;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
+	// 第五個問號們 高
+	else if (y > 0.95 && y < 1.100001 && x >= 12.188 && x <= 12.66)
+	{
+		walkingDistanceY = 1.1;
 		risingSpeed = 5;
 		falltimer = 0;
 		return 1;
@@ -1229,7 +1267,7 @@ bool DempApp::haveRoof(float x, float y)
 		return 1;
 	}
 	// 第四個問號1
-	if (blockRoof(x, y, 7.167, 7.261, 0.25, 0.4))
+	if (blockRoof(x, y, 7.124, 7.261, 0.25, 0.4))
 	{
 		if (!fourthquestion1)
 		{
@@ -1271,7 +1309,7 @@ bool DempApp::haveRoof(float x, float y)
 		return 1;
 	}
 	// 第四個問號4
-	if (blockRoof(x, y, 7.468, 7.566, 0.25, 0.4))
+	if (blockRoof(x, y, 7.468, 7.605, 0.25, 0.4))
 	{
 		if (!fourthquestion4)
 		{
@@ -1284,6 +1322,45 @@ bool DempApp::haveRoof(float x, float y)
 		}
 		return 1;
 	}
+
+	//第五個問號 低0-7
+	float fifthleft = 11.989;
+	for (int i = 0; i < 8; i++)
+	{
+		if (blockRoof(x, y, fifthleft + i * 0.108875, fifthleft + i * 0.108875 + 0.108875, 0.25, 0.4))
+		{
+			if (!fifthquestion[i])
+			{
+				PlaySoundA((LPCSTR) "Media\\Audio\\smb_coin.wav", NULL, SND_FILENAME | SND_ASYNC);
+				hit = 1;
+				timer = 0;
+				question.x = 12.075 + i * 0.1;
+				question.y = 0.4;
+				fifthquestion[i] = 1;
+			}
+			return 1;
+		}
+	}
+
+	//第五個問號 高8-11
+	fifthleft += 0.2;
+	for (int i = 0; i < 4; i++)
+	{
+		if (blockRoof(x, y, fifthleft + i * 0.108875, fifthleft + i * 0.108875 + 0.108875, 0.8, 0.95))
+		{
+			if (!fifthquestion[i + 8])
+			{
+				PlaySoundA((LPCSTR) "Media\\Audio\\smb_coin.wav", NULL, SND_FILENAME | SND_ASYNC);
+				hit = 1;
+				timer = 0;
+				question.x = 12.275 + i * 0.1;
+				question.y = 0.95;
+				fifthquestion[i + 8] = 1;
+			}
+			return 1;
+		}
+	}
+
 	return false;
 }
 
@@ -1437,20 +1514,53 @@ void DempApp::walls()
 		state = STAND;
 	}
 	// 第四個問號 低 左邊
-	else if (walkingDistanceX > 7.124 && walkingDistanceX < 7.134 && walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	else if (walkingDistanceX > 7.123 && walkingDistanceX < 7.133 && walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
 	{
-	walkingDistanceX = 7.123;
-	speed = 0;
-	state = STAND;
+		walkingDistanceX = 7.123;
+		speed = 0;
+		state = STAND;
 	}
 
 	// 第四個問號 低 右邊
 	else if (walkingDistanceX < 7.618 && walkingDistanceX> 7.598 &&  walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
 	{
-	walkingDistanceX = 7.619;
-	speed = 0;
-	state = STAND;
+		walkingDistanceX = 7.619;
+		speed = 0;
+		state = STAND;
 	}
+
+	// 第五個問號 低 左邊
+	else if (walkingDistanceX > 12.025 && walkingDistanceX < 12.035 && walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+		walkingDistanceX = 12.024;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第五個問號 低 右邊
+	else if (walkingDistanceX < 12.858 && walkingDistanceX> 12.838 &&  walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+		walkingDistanceX = 12.859;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第五個問號 高 左邊
+	else if (walkingDistanceX > 12.225 && walkingDistanceX < 12.235 && walkingDistanceY >= 0.8 && walkingDistanceY < 1)
+	{
+		walkingDistanceX = 12.224;
+		speed = 0;
+		state = STAND;
+	}
+
+	// 第五個問號 高 右邊
+	else if (walkingDistanceX < 12.655 && walkingDistanceX> 12.635 &&  walkingDistanceY >= 0.8 && walkingDistanceY < 1)
+	{
+		walkingDistanceX = 12.656;
+		speed = 0;
+		state = STAND;
+	}
+
 	// 第三大地板上的撞柱 左邊
 	else if (walkingDistanceX > 8.27 && walkingDistanceX < 8.29 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
 	{
@@ -1460,9 +1570,9 @@ void DempApp::walls()
 	}
 
 	// 第三大地板上的撞柱 右邊
-	else if (walkingDistanceX < 8.445 && walkingDistanceX> 8.425 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.4)
+	else if (walkingDistanceX < 8.449 && walkingDistanceX> 8.429 &&  walkingDistanceY >= 0 && walkingDistanceY < 0.4)
 	{
-		walkingDistanceX = 8.4451;
+		walkingDistanceX = 8.4491;
 		speed = 0;
 		state = STAND;
 	}
@@ -1682,8 +1792,6 @@ void DempApp::walls()
 		}
 
 	}
-
-
 
 	// 最右邊的牆壁
 	if (walkingDistanceX > 20.072)
