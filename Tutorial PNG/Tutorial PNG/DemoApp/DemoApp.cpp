@@ -2,7 +2,8 @@
 #include "DemoApp.h"
 #include "TextureApp.h"
 #include "LoadShaders.h"
-#include <string>
+#include <windows.h>
+#include <mmsystem.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -82,10 +83,11 @@ void DempApp::Finalize()
 
 float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight = 0, startrange = 0.7;
 int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove = 0;
+int hit = 0;
 bool controlAble = 0,//1可控制 0不可
 endGame = 0, isGrowing = false;
 bool firstlowquestion = 0, firsthighquestion = 0, secondlowquestion = 0, secondhighquestion = 0, thirdlowquestion = 0, thirdhighquestion = 0, fourthquestion1 = 0;
-std::string questionUsed;
+
 
 void DempApp::Display(bool auto_redraw)
 {
@@ -1107,8 +1109,11 @@ bool DempApp::haveRoof(float x, float y)
 	{
 		if (!firstlowquestion)
 		{
+			PlaySoundA((LPCSTR) "Media\\Audio\\smb_coin.wav", NULL, SND_FILENAME | SND_ASYNC);
+			hit = 1;
 			timer = 0;
-			questionUsed = "first_low";
+			question.x = 1.539;
+			question.y = 0.4;
 			firstlowquestion = 1;
 		}
 		return 1;
@@ -1118,8 +1123,11 @@ bool DempApp::haveRoof(float x, float y)
 	{
 		if (!firsthighquestion)
 		{
+			PlaySoundA((LPCSTR) "Media\\Audio\\smb_coin.wav", NULL, SND_FILENAME | SND_ASYNC);
+			hit = 1;
 			timer = 0;
-			questionUsed = "first_high";
+			question.x = 1.539;
+			question.y = 0.95;
 			firsthighquestion = 1;
 		}
 		return 1;
@@ -1127,25 +1135,57 @@ bool DempApp::haveRoof(float x, float y)
 	// 第二個問號 低
 	if (blockRoof(x, y, 4.856, 5.048, 0.25, 0.4))
 	{
-		secondlowquestion = 1;
+		if (!secondlowquestion)
+		{
+			PlaySoundA((LPCSTR) "Media\\Audio\\smb_coin.wav", NULL, SND_FILENAME | SND_ASYNC);
+			hit = 1;
+			timer = 0;
+			question.x = 4.952;
+			question.y = 0.4;
+			secondlowquestion = 1;
+		}
 		return 1;
 	}
 	// 第二個問號 高
 	if (blockRoof(x, y, 4.856, 5.048, 0.8, 0.95))
 	{
-		secondhighquestion = 1;
+		if (!secondhighquestion)
+		{
+			PlaySoundA((LPCSTR) "Media\\Audio\\smb_coin.wav", NULL, SND_FILENAME | SND_ASYNC);
+			hit = 1;
+			timer = 0;
+			question.x = 4.952;
+			question.y = 0.95;
+			secondhighquestion = 1;
+		}
 		return 1;
 	}
 	// 第三個問號 低
 	if (blockRoof(x, y, 5.104, 5.294, 0.25, 0.4))
 	{
-		thirdlowquestion = 1;
+		if (!thirdlowquestion)
+		{
+			PlaySoundA((LPCSTR) "Media\\Audio\\smb_coin.wav", NULL, SND_FILENAME | SND_ASYNC);
+			hit = 1;
+			timer = 0;
+			question.x = 5.2;
+			question.y = 0.4;
+			thirdlowquestion = 1;
+		}
 		return 1;
 	}
 	// 第三個問號 高
 	if (blockRoof(x, y, 5.104, 5.294, 0.8, 0.95))
 	{
-		thirdhighquestion = 1;
+		if (!thirdhighquestion)
+		{
+			PlaySoundA((LPCSTR) "Media\\Audio\\smb_coin.wav", NULL, SND_FILENAME | SND_ASYNC);
+			hit = 1;
+			timer = 0;
+			question.x = 5.2;
+			question.y = 0.95;
+			thirdhighquestion = 1;
+		}
 		return 1;
 	}
 	return false;
@@ -1572,7 +1612,7 @@ void DempApp::renderBlock(float x, float y, bool used)
 		glEnd();
 		glPopMatrix();
 
-		renderGetCoin(x, y);
+		renderGetCoin();
 	}
 }
 
@@ -1629,55 +1669,45 @@ void DempApp::renderMarioGrowing()
 		glPopMatrix();
 	}*/
 }
-using namespace std;
-vector<string>nameUsed;
-void DempApp::renderGetCoin(float x, float y)
-{
-	if (questionUsed != "")
-	{
-		for (int i = 0; i < nameUsed.size(); i++)
-		{
-			if (nameUsed[i] == questionUsed)
-				return;
-		}
 
-		glPushMatrix();
+void DempApp::renderGetCoin()
+{
+	if (hit)
+	{
+		/*glPushMatrix();
 		glTranslated(-0.305, -0.7, 0);
 		glBindTexture(GL_TEXTURE_2D, m_Coin);
 		glBegin(GL_QUADS);
-		glTexCoord2d(0, 0); glVertex2d(-0.05 + x, -0.05 + y + timer * 0.01);
-		glTexCoord2d(1, 0); glVertex2d(0.05 + x, -0.05 + y + timer * 0.01);
-		glTexCoord2d(1, 1); glVertex2d(0.05 + x, 0.1 + y + timer * 0.01);
-		glTexCoord2d(0, 1); glVertex2d(-0.05 + x, 0.1 + y + timer * 0.01);
+		glTexCoord2d(0, 0); glVertex2d(-0.05 + question.x, -0.05 + question.y + timer * 0.02);
+		glTexCoord2d(1, 0); glVertex2d(0.05 + question.x, -0.05 + question.y + timer * 0.02);
+		glTexCoord2d(1, 1); glVertex2d(0.05 + question.x, 0.1 + question.y + timer * 0.02);
+		glTexCoord2d(0, 1); glVertex2d(-0.05 + question.x, 0.1 + question.y + timer * 0.02);
 		glEnd();
-		glPopMatrix();
+		glPopMatrix();*/
 
-		if (0.1 + y + timer * 0.01 > 0.5)
-		{
-			nameUsed.push_back(questionUsed);
-			questionUsed = "";
-		}
-	}
-	
-	//// use Mario.vs & Mario.fs
-	//glUseProgram(program);
+		// use Mario.vs & Mario.fs
+		glUseProgram(program);
 
-	//// draw texture
-	//glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, m_Mario_shader);
+		// draw texture
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_Mario_shader);
 
-	//// pass uniform value
-	//glUniform1f(translateX, x);
-	//glUniform1f(translateY, y);
-	//glUniform1i(GL_timer, timer);
+		// pass uniform value
+		glUniform1f(translateX, question.x-screenmiddle);
+		glUniform1f(translateY, question.y+0.2);
+		glUniform1i(GL_timer, timer);
 
-	//// draw VAO
-	//glBindVertexArray(marioVAO);
-	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		// draw VAO
+		glBindVertexArray(marioVAO);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-	//// free binding
-	//glBindVertexArray(0);
-	//glUseProgram(0);
+		// free binding
+		glBindVertexArray(0);
+		glUseProgram(0);
+
+		if (timer * 0.02 > 0.5)
+			hit = 0;
+	}	
 }
 
 void DempApp::initMarioTexture()
@@ -1720,7 +1750,7 @@ void DempApp::initMarioTexture()
 	glEnableVertexAttribArray(2);
 
 
-	m_Mario_shader = loadTexture("Media\\Texture\\Coin.png", GL_RGBA);
+	m_Mario_shader = loadTexture("Media\\Texture\\Mario2.png", GL_RGBA);
 	glBindVertexArray(0);
 	glUseProgram(0);
 }

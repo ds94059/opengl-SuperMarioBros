@@ -15,6 +15,10 @@ class DempApp :
 private:
 	double m_Angle;
 	double m_CoinRotation;
+	struct 
+	{
+		float x, y;
+	} question;
 
 	// textureID
 	GLuint m_Coin;
@@ -77,7 +81,7 @@ protected:
 	void walls();
 	unsigned int loadTexture(std::string path, int imageType);
 	void renderMarioGrowing();
-	void renderGetCoin(float x,float y);
+	void renderGetCoin();
 	void initMarioTexture();
 private:
 };

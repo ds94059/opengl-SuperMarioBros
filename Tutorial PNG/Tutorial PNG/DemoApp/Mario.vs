@@ -10,7 +10,8 @@ uniform int timer;
 
 void main()
 {
-    position += vec3(translateX,translateY,0);
+	position += vec3(-0.305,-0.7,0);
+    position += vec3(translateX,translateY+timer*0.02,0);
 	gl_Position = vec4(position, 1.0);
 	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
 }
