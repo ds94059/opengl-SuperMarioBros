@@ -5,6 +5,8 @@
 #include <windows.h>
 #include <mmsystem.h>
 
+#define DEBUG
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -19,6 +21,8 @@
 #define RISING 1
 #define FALLING 2
 #define FLOATING 3
+
+#define DOR(angle) (angle*3.14159/180);
 
 bool RightButtonDown = false;
 bool LeftButtonDown = false;
@@ -37,6 +41,26 @@ mat4 translate(float x, float y, float z) {
 	mat4 M = mat4(c1, c2, c3, t);
 	return M;
 }
+mat4 scale(float x, float y, float z) {
+	vec4 c1 = vec4(x, 0, 0, 0);
+	vec4 c2 = vec4(0, y, 0, 0);
+	vec4 c3 = vec4(0, 0, z, 0);
+	vec4 c4 = vec4(0, 0, 0, 1);
+	mat4 M = mat4(c1, c2, c3, c4);
+	return M;
+}
+mat4 rotate(float angle, float x, float y, float z) {
+	float r = DOR(angle);
+	mat4 M = mat4(1);
+
+	vec4 c1 = vec4(cos(r) + (1 - cos(r))*x*x, (1 - cos(r))*y*x + sin(r)*z, (1 - cos(r))*z*x - sin(r)*y, 0);
+	vec4 c2 = vec4((1 - cos(r))*y*x - sin(r)*z, cos(r) + (1 - cos(r))*y*y, (1 - cos(r))*z*y + sin(r)*x, 0);
+	vec4 c3 = vec4((1 - cos(r))*z*x + sin(r)*y, (1 - cos(r))*z*y - sin(r)*x, cos(r) + (1 - cos(r))*z*z, 0);
+	vec4 c4 = vec4(0, 0, 0, 1);
+	M = mat4(c1, c2, c3, c4);
+	return M;
+}
+
 
 DempApp::DempApp(void) :
 	m_Angle(2),
@@ -309,11 +333,15 @@ void DempApp::Display(bool auto_redraw)
 		{
 			farestPos = walkingDistanceX;
 		}
+
+#ifdef DEBUG
 		std::cout << "farest:" << farestPos << std::endl;
 		std::cout << "screenmiddle:" << screenmiddle << std::endl;
 		std::cout << "now:" << walkingDistanceX << std::endl;
 		std::cout << "height" << walkingDistanceY << std::endl;
 		std::cout << "risingSpeed: " << risingSpeed << std::endl;
+#endif // DEBUG
+
 		if (die == 1)
 		{
 			if (lives > 0)
@@ -1685,6 +1713,8 @@ void DempApp::renderGetCoin()
 		glEnd();
 		glPopMatrix();*/
 
+		coinMatrix = coinMatrix * rotate(20, 1, 0, 0);
+
 		// use Mario.vs & Mario.fs
 		glUseProgram(program);
 
@@ -1693,9 +1723,10 @@ void DempApp::renderGetCoin()
 		glBindTexture(GL_TEXTURE_2D, m_Coin);
 
 		// pass uniform value
-		glUniform1f(translateX, question.x-screenmiddle);
-		glUniform1f(translateY, question.y+0.2);
+		glUniform1f(translateX, question.x - screenmiddle);
+		glUniform1f(translateY, question.y + 0.2);
 		glUniform1i(GL_timer, timer);
+		glUniformMatrix4fv(GL_coinMatrix, 1, GL_FALSE, &coinMatrix[0][0]);
 
 		// draw VAO
 		glBindVertexArray(marioVAO);
@@ -1707,7 +1738,7 @@ void DempApp::renderGetCoin()
 
 		if (timer * 0.02 > 0.5)
 			hit = 0;
-	}	
+	}
 }
 
 void DempApp::initMarioTexture()
@@ -1725,6 +1756,7 @@ void DempApp::initMarioTexture()
 	translateX = glGetUniformLocation(program, "translateX");
 	translateY = glGetUniformLocation(program, "translateY");
 	GL_timer = glGetUniformLocation(program, "timer");
+	GL_coinMatrix = glGetUniformLocation(program, "coinMatrix");
 
 	///////////////draw
 	glGenVertexArrays(1, &marioVAO);

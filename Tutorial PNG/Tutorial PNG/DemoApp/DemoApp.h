@@ -19,6 +19,7 @@ private:
 	{
 		float x, y;
 	} question;
+	mat4 coinMatrix;
 
 	// textureID
 	GLuint m_Coin;
@@ -40,10 +41,11 @@ private:
 	// uniform parameter
 	GLfloat translateX,translateY;
 	GLuint GL_timer;
+	GLuint GL_coinMatrix;
 
 	// VAO, VBO, EBO
 	GLuint marioVAO, marioVBO, marioEBO;
-
+	
 	float vertices[32] = { // (0,0)¦b¥ª¤W
 		// positions          // colors           // texture coords
 		-0.05f, -0.05f, 0.0f,   0.0f, 0.0f, 1.0f,   0, 1, // bottom left
