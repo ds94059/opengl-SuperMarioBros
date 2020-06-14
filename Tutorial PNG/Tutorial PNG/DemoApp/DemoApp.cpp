@@ -86,8 +86,8 @@ int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, 
 int hit = 0;
 bool controlAble = 0,//1可控制 0不可
 endGame = 0, isGrowing = false;
-bool firstlowquestion = 0, firsthighquestion = 0, secondlowquestion = 0, secondhighquestion = 0, thirdlowquestion = 0, thirdhighquestion = 0, fourthquestion1 = 0;
-
+bool firstlowquestion = 0, firsthighquestion = 0, secondlowquestion = 0, secondhighquestion = 0, thirdlowquestion = 0, thirdhighquestion = 0, 
+fourthquestion1 = 0, fourthquestion2 = 0, fourthquestion3 = 0, fourthquestion4 = 0;
 
 void DempApp::Display(bool auto_redraw)
 {
@@ -192,6 +192,9 @@ void DempApp::Display(bool auto_redraw)
 			thirdlowquestion = 0;
 			thirdhighquestion = 0;
 			fourthquestion1 = 0;
+			fourthquestion2 = 0;
+			fourthquestion3 = 0;
+			fourthquestion4 = 0;
 			state = STANDING;
 			LeftButtonDown = FALSE;
 			RightButtonDown = FALSE;
@@ -283,11 +286,11 @@ void DempApp::Display(bool auto_redraw)
 		//第四個問號1
 		renderBlock(7.219, 0.4, fourthquestion1);
 		//第四個問號2
-		renderBlock(7.319, 0.4, fourthquestion1);
+		renderBlock(7.319, 0.4, fourthquestion2);
 		//第四個問號3
-		renderBlock(7.419, 0.4, fourthquestion1);
+		renderBlock(7.419, 0.4, fourthquestion3);
 		//第四個問號4
-		renderBlock(7.519, 0.4, fourthquestion1);
+		renderBlock(7.519, 0.4, fourthquestion4);
 
 		//// 水管
 		//glPushMatrix();
@@ -594,6 +597,7 @@ void DempApp::KeyDown(int key)
 			if (inair == STANDING)
 			{
 				inair = RISING;
+				//PlaySoundA((LPCSTR) "Media\\Audio\\smb_jump-small.wav", NULL, SND_FILENAME | SND_ASYNC);
 				UpButtonDown = true;
 			}
 		}
@@ -950,6 +954,14 @@ bool DempApp::haveGround(float x, float y)
 		falltimer = 0;
 		return 1;
 	}
+	// 第四個問號們
+	else	if (y > 0.4 && y < 0.5500001 && x >= 7.124 && x <= 7.618)
+	{
+		walkingDistanceY = 0.55;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
 	// 第三大地板上的撞柱
 	else if (y < 0.4100001 && x >= 8.27 && x <= 8.445)
 	{
@@ -1188,6 +1200,62 @@ bool DempApp::haveRoof(float x, float y)
 		}
 		return 1;
 	}
+	// 第四個問號1
+	if (blockRoof(x, y, 7.167, 7.261, 0.25, 0.4))
+	{
+		if (!fourthquestion1)
+		{
+			PlaySoundA((LPCSTR) "Media\\Audio\\smb_coin.wav", NULL, SND_FILENAME | SND_ASYNC);
+			hit = 1;
+			timer = 0;
+			question.x = 7.214;
+			question.y = 0.4;
+			fourthquestion1 = 1;
+		}
+		return 1;
+	}
+	// 第四個問號2
+	if (blockRoof(x, y, 7.261, 7.364, 0.25, 0.4))
+	{
+		if (!fourthquestion2)
+		{
+			PlaySoundA((LPCSTR) "Media\\Audio\\smb_coin.wav", NULL, SND_FILENAME | SND_ASYNC);
+			hit = 1;
+			timer = 0;
+			question.x = 7.3125;
+			question.y = 0.4;
+			fourthquestion2 = 1;
+		}
+		return 1;
+	}
+	// 第四個問號3
+	if (blockRoof(x, y, 7.364, 7.468, 0.25, 0.4))
+	{
+		if (!fourthquestion3)
+		{
+			PlaySoundA((LPCSTR) "Media\\Audio\\smb_coin.wav", NULL, SND_FILENAME | SND_ASYNC);
+			hit = 1;
+			timer = 0;
+			question.x = 7.416;
+			question.y = 0.4;
+			fourthquestion3 = 1;
+		}
+		return 1;
+	}
+	// 第四個問號4
+	if (blockRoof(x, y, 7.468, 7.566, 0.25, 0.4))
+	{
+		if (!fourthquestion4)
+		{
+			PlaySoundA((LPCSTR) "Media\\Audio\\smb_coin.wav", NULL, SND_FILENAME | SND_ASYNC);
+			hit = 1;
+			timer = 0;
+			question.x = 7.517;
+			question.y = 0.4;
+			fourthquestion4 = 1;
+		}
+		return 1;
+	}
 	return false;
 }
 
@@ -1340,7 +1408,21 @@ void DempApp::walls()
 		speed = 0;
 		state = STAND;
 	}
+	// 第四個問號 低 左邊
+	else if (walkingDistanceX > 7.124 && walkingDistanceX < 7.134 && walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+	walkingDistanceX = 7.123;
+	speed = 0;
+	state = STAND;
+	}
 
+	// 第四個問號 低 右邊
+	else if (walkingDistanceX < 7.618 && walkingDistanceX> 7.598 &&  walkingDistanceY >= 0.25 && walkingDistanceY < 0.54)
+	{
+	walkingDistanceX = 7.619;
+	speed = 0;
+	state = STAND;
+	}
 	// 第三大地板上的撞柱 左邊
 	else if (walkingDistanceX > 8.27 && walkingDistanceX < 8.29 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
 	{

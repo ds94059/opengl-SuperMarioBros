@@ -36,7 +36,7 @@ private:
 	GLuint m_Pipe;
 	GLuint m_question1;
 	GLuint m_question2;
-
+	typedef const CHAR* JUMP;
 	// uniform parameter
 	GLfloat translateX,translateY;
 	GLuint GL_timer;
