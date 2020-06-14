@@ -1690,7 +1690,7 @@ void DempApp::renderGetCoin()
 
 		// draw texture
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_Mario_shader);
+		glBindTexture(GL_TEXTURE_2D, m_Coin);
 
 		// pass uniform value
 		glUniform1f(translateX, question.x-screenmiddle);
@@ -1750,7 +1750,7 @@ void DempApp::initMarioTexture()
 	glEnableVertexAttribArray(2);
 
 
-	m_Mario_shader = loadTexture("Media\\Texture\\Mario2.png", GL_RGBA);
+	m_Coin = loadTexture("Media\\Texture\\Coin.png", GL_RGBA);
 	glBindVertexArray(0);
 	glUseProgram(0);
 }

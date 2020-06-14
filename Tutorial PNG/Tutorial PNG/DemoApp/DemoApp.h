@@ -46,10 +46,10 @@ private:
 
 	float vertices[32] = { // (0,0)¦b¥ª¤W
 		// positions          // colors           // texture coords
-		-0.05f, -0.05f, 0.0f,   0.0f, 0.0f, 1.0f,   0.458333, 0.08902, // bottom left
-		 0.05f, -0.05f, 0.0f,   0.0f, 1.0f, 0.0f,   0.497395, 0.08902, // bottom right
-		 0.05f,  0.1f, 0.0f,   1.0f, 0.0f, 0.0f,   0.497395, 0.0615, // top right
-		-0.05f,  0.1f, 0.0f,   0.0f, 0.0f, 1.0f,   0.458333, 0.0615  // top left
+		-0.05f, -0.05f, 0.0f,   0.0f, 0.0f, 1.0f,   0, 1, // bottom left
+		 0.05f, -0.05f, 0.0f,   0.0f, 1.0f, 0.0f,   1, 1, // bottom right
+		 0.05f,  0.1f, 0.0f,   1.0f, 0.0f, 0.0f,   1, 0, // top right
+		-0.05f,  0.1f, 0.0f,   0.0f, 0.0f, 1.0f,   0, 0  // top left
 	};
 	unsigned int indices[6] = {
 		0,1,2, // first triangle
