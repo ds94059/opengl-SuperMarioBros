@@ -15,9 +15,12 @@ class DempApp :
 private:
 	double m_Angle;
 	double m_CoinRotation;
+
+	// textureID
 	GLuint m_Coin;
 	GLuint m_Background;
 	GLuint m_Mario;
+	GLuint m_Mario_shader;
 	GLuint m_Start;
 	GLuint m_End;
 	GLuint m_3;
@@ -29,21 +32,24 @@ private:
 	GLuint m_Pipe;
 	GLuint m_question1;
 	GLuint m_question2;
-	// uniform parameter
-	GLuint Mario_uniform;
 
+	// uniform parameter
+	GLfloat translateX,translateY;
+	GLuint GL_timer;
+
+	// VAO, VBO, EBO
 	GLuint marioVAO, marioVBO, marioEBO;
 
-	float vertices[32] = {
+	float vertices[32] = { // (0,0)¦b¥ª¤W
 		// positions          // colors           // texture coords
-		 0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-		 0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-		-0.5f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 1.0f  // top left
+		-0.05f, -0.05f, 0.0f,   0.0f, 0.0f, 1.0f,   0.458333, 0.08902, // bottom left
+		 0.05f, -0.05f, 0.0f,   0.0f, 1.0f, 0.0f,   0.497395, 0.08902, // bottom right
+		 0.05f,  0.1f, 0.0f,   1.0f, 0.0f, 0.0f,   0.497395, 0.0615, // top right
+		-0.05f,  0.1f, 0.0f,   0.0f, 0.0f, 1.0f,   0.458333, 0.0615  // top left
 	};
 	unsigned int indices[6] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
+		0,1,2, // first triangle
+		2,3,0  // second triangle
 	};
 
 public:
@@ -70,7 +76,8 @@ protected:
 	bool haveRoof(float x, float y);
 	void walls();
 	unsigned int loadTexture(std::string path, int imageType);
-	void drawMarioTexture();
+	void renderMarioGrowing();
+	void renderGetCoin(float x,float y);
 	void initMarioTexture();
 private:
 };

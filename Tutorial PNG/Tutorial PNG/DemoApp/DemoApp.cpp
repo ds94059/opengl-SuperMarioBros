@@ -2,6 +2,7 @@
 #include "DemoApp.h"
 #include "TextureApp.h"
 #include "LoadShaders.h"
+#include <string>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -52,9 +53,8 @@ void DempApp::Initialize()
 {
 	InitOpenGLApp::Initialize("App", 140, 140, 1200, 720);
 	InitGlutInput::Initialize();
-	m_Coin = TextureApp::GenTexture("Media\\Texture\\coin.png");
 	m_Background = TextureApp::GenTexture("Media\\Texture\\ourmap.png");
-	//m_Mario = DempApp::loadTexture("Media\\Texture\\Mario2.png",GL_RGBA);
+	m_Coin = TextureApp::GenTexture("Media\\Texture\\Coin.png");
 	m_Mario = TextureApp::GenTexture("Media\\Texture\\Mario2.png");
 	m_Start = TextureApp::GenTexture("Media\\Texture\\startpage.jpg");
 	m_End = TextureApp::GenTexture("Media\\Texture\\gameover.jpg");
@@ -83,8 +83,10 @@ void DempApp::Finalize()
 float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight = 0, startrange = 0.7;
 int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove = 0;
 bool controlAble = 0,//1可控制 0不可
-endGame = 0;
-bool firstlowquestion = 0, firsthighquestion=0, secondlowquestion = 0, secondhighquestion = 0, thirdlowquestion = 0, thirdhighquestion = 0, fourthquestion1 = 0;
+endGame = 0, isGrowing = false;
+bool firstlowquestion = 0, firsthighquestion = 0, secondlowquestion = 0, secondhighquestion = 0, thirdlowquestion = 0, thirdhighquestion = 0, fourthquestion1 = 0;
+std::string questionUsed;
+
 void DempApp::Display(bool auto_redraw)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -113,8 +115,8 @@ void DempApp::Display(bool auto_redraw)
 		glBegin(GL_QUADS);
 		glTexCoord2d(0.458333, 0.91098); glVertex2d(-0.05, -0.05 + startrange);
 		glTexCoord2d(0.497395, 0.91098); glVertex2d(0.05, -0.05 + startrange);
-		glTexCoord2d(0.497395, 0.9385); glVertex2d(0.05, 0.1 + startrange);
-		glTexCoord2d(0.458333, 0.9385); glVertex2d(-0.05, 0.1 + startrange);
+		glTexCoord2d(0.497395, 0.93850); glVertex2d(0.05, 0.1 + startrange);
+		glTexCoord2d(0.458333, 0.93850); glVertex2d(-0.05, 0.1 + startrange);
 		glEnd();
 		glPopMatrix();
 
@@ -172,7 +174,6 @@ void DempApp::Display(bool auto_redraw)
 
 		if (starttimer == 0)
 		{
-			timer = 0;
 			walkingDistanceX = 0;
 			walkingDistanceY = 0;
 			farestPos = 0;
@@ -343,7 +344,7 @@ void DempApp::Display(bool auto_redraw)
 				}
 			}
 			walls();
-			
+
 			// 下墜 天花板 判定
 			if ((haveGround(walkingDistanceX, walkingDistanceY) == 1) && inair != RISING)
 			{
@@ -355,11 +356,11 @@ void DempApp::Display(bool auto_redraw)
 				risingSpeed = 2;
 				inair = FALLING;
 			}
-			else if((haveRoof(walkingDistanceX, walkingDistanceY) == 1) && inair == RISING)
+			else if ((haveRoof(walkingDistanceX, walkingDistanceY) == 1) && inair == RISING)
 			{
 				inair = FALLING;
 			}
-			
+
 			if (inair == RISING)
 			{
 				if (UpButtonDown)
@@ -508,7 +509,7 @@ void DempApp::Display(bool auto_redraw)
 		}
 		else if (state == STAND)
 		{
-			if (timer == 3)
+			if (timer % 3 == 0)
 			{
 				if (speed > 0)
 				{
@@ -522,11 +523,10 @@ void DempApp::Display(bool auto_redraw)
 		}
 		if (walkingState == 9)
 			walkingState = 0;
-		if (timer >= 3)
+		/*if (timer >= 3)
 		{
 			timer = 0;
-		}
-		drawMarioTexture();
+		}*/
 	}
 
 	glDisable(GL_BLEND);
@@ -596,6 +596,9 @@ void DempApp::KeyDown(int key)
 			}
 		}
 	}
+	if (key == 'r')
+	{
+	}
 	if (startGame == 0)
 	{
 		if (key == KEY_ENTER)
@@ -604,8 +607,6 @@ void DempApp::KeyDown(int key)
 			//TextureApp::ScreenShot(std::string("ScreenShot"));
 		}
 	}
-
-
 }
 
 void DempApp::KeyUp(int key)
@@ -671,8 +672,8 @@ void DempApp::renderStand(int dir)
 		glTranslated(-0.305, -0.7, 0);
 		glBindTexture(GL_TEXTURE_2D, m_Mario);
 		glBegin(GL_QUADS);
-		glTexCoord2d(0.458333, 0.91098);glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.497395, 0.91098);glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+		glTexCoord2d(0.458333, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+		glTexCoord2d(0.497395, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
 		glTexCoord2d(0.497395, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
 		glTexCoord2d(0.458333, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
 		glEnd();
@@ -884,13 +885,13 @@ bool DempApp::haveGround(float x, float y)
 		return 1;
 	}
 	// 第一個問號 低
-	else	if (y>0.4 && y < 0.5500001 && x >= 1.445 && x <= 1.635)
-		{
-			walkingDistanceY = 0.55;
-			risingSpeed = 5;
-			falltimer = 0;
-			return 1;
-		}
+	else	if (y > 0.4 && y < 0.5500001 && x >= 1.445 && x <= 1.635)
+	{
+		walkingDistanceY = 0.55;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
+	}
 	// 第一個問號 高
 	else	if (y > 0.95 && y < 1.100001 && x >= 1.445 && x <= 1.635)
 	{
@@ -1033,66 +1034,66 @@ bool DempApp::haveGround(float x, float y)
 	// 階梯1
 	else if (y < 0.1500001 && x >= 17.462 && x <= 17.5682)
 	{
-	walkingDistanceY = 0.15;
-	risingSpeed = 5;
-	falltimer = 0;
-	return 1;
+		walkingDistanceY = 0.15;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
 	}
 	// 階梯2
 	else if (y < 0.2800001 && x >= 17.5482 && x <= 17.6522)
 	{
-	walkingDistanceY = 0.28;
-	risingSpeed = 5;
-	falltimer = 0;
-	return 1;
+		walkingDistanceY = 0.28;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
 	}
 	// 階梯3
 	else if (y < 0.4100001 && x >= 17.6322 && x <= 17.7402)
 	{
-	walkingDistanceY = 0.41;
-	risingSpeed = 5;
-	falltimer = 0;
-	return 1;
+		walkingDistanceY = 0.41;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
 	}
 	// 階梯4
-	else if (y < 0.5500001 && x >= 17.7202 && x <=17.8303)
+	else if (y < 0.5500001 && x >= 17.7202 && x <= 17.8303)
 	{
-	walkingDistanceY = 0.55;
-	risingSpeed = 5;
-	falltimer = 0;
-	return 1;
+		walkingDistanceY = 0.55;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
 	}
 	// 階梯5
 	else if (y < 0.6800001 && x >= 17.8103 && x <= 17.9143)
 	{
-	walkingDistanceY = 0.68;
-	risingSpeed = 5;
-	falltimer = 0;
-	return 1;
+		walkingDistanceY = 0.68;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
 	}
 	// 階梯6
 	else if (y < 0.8100001 && x >= 17.8943 && x <= 18.0003)
 	{
-	walkingDistanceY = 0.81;
-	risingSpeed = 5;
-	falltimer = 0;
-	return 1;
+		walkingDistanceY = 0.81;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
 	}
 	// 階梯7
 	else if (y < 0.9500001 && x >= 17.9803 && x <= 18.0923)
 	{
-	walkingDistanceY = 0.95;
-	risingSpeed = 5;
-	falltimer = 0;
-	return 1;
+		walkingDistanceY = 0.95;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
 	}
 	// 階梯8
 	else if (y < 1.0800001 && x >= 18.0723 && x <= 18.3143)
 	{
-	walkingDistanceY = 1.08;
-	risingSpeed = 5;
-	falltimer = 0;
-	return 1;
+		walkingDistanceY = 1.08;
+		risingSpeed = 5;
+		falltimer = 0;
+		return 1;
 	}
 	else
 	{
@@ -1102,29 +1103,39 @@ bool DempApp::haveGround(float x, float y)
 bool DempApp::haveRoof(float x, float y)
 {
 	// 第一個問號 低
-	if (blockRoof(x, y,1.445, 1.635, 0.25, 0.4))
+	if (blockRoof(x, y, 1.445, 1.635, 0.25, 0.4))
 	{
-		firstlowquestion = 1;
+		if (!firstlowquestion)
+		{
+			timer = 0;
+			questionUsed = "first_low";
+			firstlowquestion = 1;
+		}
 		return 1;
 	}
 	// 第一個問號 高
 	if (blockRoof(x, y, 1.445, 1.635, 0.8, 0.95))
 	{
-		firsthighquestion = 1;
+		if (!firsthighquestion)
+		{
+			timer = 0;
+			questionUsed = "first_high";
+			firsthighquestion = 1;
+		}
 		return 1;
 	}
 	// 第二個問號 低
 	if (blockRoof(x, y, 4.856, 5.048, 0.25, 0.4))
-		{
-			secondlowquestion = 1;
-			return 1;
-		}
+	{
+		secondlowquestion = 1;
+		return 1;
+	}
 	// 第二個問號 高
 	if (blockRoof(x, y, 4.856, 5.048, 0.8, 0.95))
-		{
-			secondhighquestion = 1;
-			return 1;
-		}
+	{
+		secondhighquestion = 1;
+		return 1;
+	}
 	// 第三個問號 低
 	if (blockRoof(x, y, 5.104, 5.294, 0.25, 0.4))
 	{
@@ -1435,69 +1446,69 @@ void DempApp::walls()
 	//階梯1
 	else if (walkingDistanceX > 17.462 && walkingDistanceX < 17.482 && walkingDistanceY >= 0 && walkingDistanceY < 0.149)
 	{
-	walkingDistanceX = 17.461;
-	speed = 0;
-	state = STAND;
+		walkingDistanceX = 17.461;
+		speed = 0;
+		state = STAND;
 	}
 	//階梯2
 	else if (walkingDistanceX > 17.5482 && walkingDistanceX < 17.5682 && walkingDistanceY >= 0 && walkingDistanceY < 0.279)
 	{
-	walkingDistanceX = 17.5481;
-	speed = 0;
-	state = STAND;
+		walkingDistanceX = 17.5481;
+		speed = 0;
+		state = STAND;
 	}
 	//階梯3
 	else if (walkingDistanceX > 17.6322 && walkingDistanceX < 17.6522 && walkingDistanceY >= 0 && walkingDistanceY < 0.4)
 	{
-	walkingDistanceX = 17.6321;
-	speed = 0;
-	state = STAND;
+		walkingDistanceX = 17.6321;
+		speed = 0;
+		state = STAND;
 	}
 	//階梯4
 	else if (walkingDistanceX > 17.7202 && walkingDistanceX < 17.7402 && walkingDistanceY >= 0 && walkingDistanceY < 0.54)
 	{
-	walkingDistanceX = 17.7201;
-	speed = 0;
-	state = STAND;
+		walkingDistanceX = 17.7201;
+		speed = 0;
+		state = STAND;
 	}
 	//階梯5
-	else if (walkingDistanceX >	17.8103 && walkingDistanceX < 17.8303 && walkingDistanceY >= 0 && walkingDistanceY < 0.67)
+	else if (walkingDistanceX > 17.8103 && walkingDistanceX < 17.8303 && walkingDistanceY >= 0 && walkingDistanceY < 0.67)
 	{
-	walkingDistanceX = 17.8102;
-	speed = 0;
-	state = STAND;
+		walkingDistanceX = 17.8102;
+		speed = 0;
+		state = STAND;
 	}
 	//階梯6
 	else if (walkingDistanceX > 17.8943 && walkingDistanceX < 17.9143 && walkingDistanceY >= 0 && walkingDistanceY < 0.8099)
 	{
-	walkingDistanceX = 17.8942;
-	speed = 0;
-	state = STAND;
+		walkingDistanceX = 17.8942;
+		speed = 0;
+		state = STAND;
 	}
 	//階梯7
 	else if (walkingDistanceX > 17.9803 && walkingDistanceX < 18.0003 && walkingDistanceY >= 0 && walkingDistanceY < 0.9499)
 	{
-	walkingDistanceX = 17.9802;
-	speed = 0;
-	state = STAND;
+		walkingDistanceX = 17.9802;
+		speed = 0;
+		state = STAND;
 	}
 	//階梯8
 	else if (walkingDistanceX > 18.0723 && walkingDistanceX < 18.0923 && walkingDistanceY >= 0 && walkingDistanceY < 1.079)
 	{
-	walkingDistanceX = 18.0722;
-	speed = 0;
-	state = STAND;
+		walkingDistanceX = 18.0722;
+		speed = 0;
+		state = STAND;
 	}
 	// 大階梯 右邊
 	else if (walkingDistanceX < 18.3364 && walkingDistanceX> 18.3164 && walkingDistanceY < 1.079)
 	{
-	walkingDistanceX = 18.3365;
-	speed = 0;
-	state = STAND;
+		walkingDistanceX = 18.3365;
+		speed = 0;
+		state = STAND;
 	}
 	else if (LeftButtonDown == true || RightButtonDown == true)
 	{
-	state = WALKING;
+		state = WALKING;
 	}
 
 
@@ -1560,12 +1571,14 @@ void DempApp::renderBlock(float x, float y, bool used)
 		glTexCoord2d(0, 1); glVertex2d(-0.05 + x, 0.1 + y);
 		glEnd();
 		glPopMatrix();
+
+		renderGetCoin(x, y);
 	}
 }
 
-bool DempApp::blockRoof(float x, float y, float x1,float x2, float y1, float y2)
+bool DempApp::blockRoof(float x, float y, float x1, float x2, float y1, float y2)
 {
-	if (y > y1 && y < y2+0.000001 && x >= x1 && x <= x2)
+	if (y > y1 && y < y2 + 0.000001 && x >= x1 && x <= x2)
 	{
 		risingSpeed = 2;
 		falltimer = 0;
@@ -1599,15 +1612,72 @@ unsigned int DempApp::loadTexture(std::string path, int imageType)
 	return textureID;
 }
 
-void DempApp::drawMarioTexture()
+void DempApp::renderMarioGrowing()
 {
-	glBindVertexArray(marioVAO);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_Coin);
-	glUseProgram(program);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-	glUseProgram(0);
+	/*for (int i = 0; i < 100; i++)
+	{
+		glPushMatrix();
+		glTranslated(-0.305, -0.7, 0);
+		glScaled(1, timer*0.3 + 1, 1);
+		glBindTexture(GL_TEXTURE_2D, m_Mario);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0.20833333333, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+		glTexCoord2d(0.2447916666666667, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+		glTexCoord2d(0.2447916666666667, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+		glTexCoord2d(0.20833333333, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+		glEnd();
+		glPopMatrix();
+	}*/
+}
+using namespace std;
+vector<string>nameUsed;
+void DempApp::renderGetCoin(float x, float y)
+{
+	if (questionUsed != "")
+	{
+		for (int i = 0; i < nameUsed.size(); i++)
+		{
+			if (nameUsed[i] == questionUsed)
+				return;
+		}
+
+		glPushMatrix();
+		glTranslated(-0.305, -0.7, 0);
+		glBindTexture(GL_TEXTURE_2D, m_Coin);
+		glBegin(GL_QUADS);
+		glTexCoord2d(0, 0); glVertex2d(-0.05 + x, -0.05 + y + timer * 0.01);
+		glTexCoord2d(1, 0); glVertex2d(0.05 + x, -0.05 + y + timer * 0.01);
+		glTexCoord2d(1, 1); glVertex2d(0.05 + x, 0.1 + y + timer * 0.01);
+		glTexCoord2d(0, 1); glVertex2d(-0.05 + x, 0.1 + y + timer * 0.01);
+		glEnd();
+		glPopMatrix();
+
+		if (0.1 + y + timer * 0.01 > 0.5)
+		{
+			nameUsed.push_back(questionUsed);
+			questionUsed = "";
+		}
+	}
+	
+	//// use Mario.vs & Mario.fs
+	//glUseProgram(program);
+
+	//// draw texture
+	//glActiveTexture(GL_TEXTURE0);
+	//glBindTexture(GL_TEXTURE_2D, m_Mario_shader);
+
+	//// pass uniform value
+	//glUniform1f(translateX, x);
+	//glUniform1f(translateY, y);
+	//glUniform1i(GL_timer, timer);
+
+	//// draw VAO
+	//glBindVertexArray(marioVAO);
+	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	//// free binding
+	//glBindVertexArray(0);
+	//glUseProgram(0);
 }
 
 void DempApp::initMarioTexture()
@@ -1620,6 +1690,11 @@ void DempApp::initMarioTexture()
 		{ GL_NONE, NULL } };
 	program = LoadShaders(shaders);//讀取shader
 	glUseProgram(program);//uniform參數數值前必須先use shader
+
+	// uniform value setting
+	translateX = glGetUniformLocation(program, "translateX");
+	translateY = glGetUniformLocation(program, "translateY");
+	GL_timer = glGetUniformLocation(program, "timer");
 
 	///////////////draw
 	glGenVertexArrays(1, &marioVAO);
@@ -1645,7 +1720,7 @@ void DempApp::initMarioTexture()
 	glEnableVertexAttribArray(2);
 
 
-	m_Coin = loadTexture("Media\\Texture\\Coin.png", GL_RGBA);
+	m_Mario_shader = loadTexture("Media\\Texture\\Coin.png", GL_RGBA);
 	glBindVertexArray(0);
 	glUseProgram(0);
 }
