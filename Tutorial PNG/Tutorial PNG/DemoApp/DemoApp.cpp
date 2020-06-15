@@ -14,6 +14,7 @@
 #define WALKING 1
 #define JUMPING 2
 #define CROUCH 3
+#define DEAD 4
 
 #define MAX_SPEED 10
 
@@ -93,6 +94,10 @@ void DempApp::Initialize()
 
 	m_question1 = TextureApp::GenTexture("Media\\Texture\\questionblock.png");
 	m_question2 = TextureApp::GenTexture("Media\\Texture\\questionblock2.png");
+
+	m_goomba1 = TextureApp::GenTexture("Media\\Texture\\goombawalk1.png");
+	m_goomba2 = TextureApp::GenTexture("Media\\Texture\\goombawalk2.png");
+	m_goombadead = TextureApp::GenTexture("Media\\Texture\\goombadead.png");
 	m_Pipe = TextureApp::GenTexture("Media\\Texture\\Pipe.png");
 
 
@@ -105,13 +110,13 @@ void DempApp::Finalize()
 	glDeleteTextures(1, &m_Coin);
 }
 
-float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight = 0, startrange = 0.7;
-int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove = 0;
+float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight = 0, startrange = 0.7, goombax[1] = { 1.804 }, goombay[1] = { 0 }, goombadirect[1] = {-0.005};
+int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove = 0, goombaMove[1] = { 0 }, goombaDead[1] = { 0 };
 int hit = 0;
 bool controlAble = 0,//1可控制 0不可
 endGame = 0, isGrowing = false;
 bool firstlowquestion = 0, firsthighquestion = 0, secondlowquestion = 0, secondhighquestion = 0, thirdlowquestion = 0, thirdhighquestion = 0,
-fourthquestion1 = 0, fourthquestion2 = 0, fourthquestion3 = 0, fourthquestion4 = 0, fifthquestion[12] = { 0 };
+fourthquestion1 = 0, fourthquestion2 = 0, fourthquestion3 = 0, fourthquestion4 = 0, fifthquestion[12] = { 0 }, goombaalive[1] = { 1 }, floweralive = 1;
 
 void DempApp::Display(bool auto_redraw)
 {
@@ -221,6 +226,14 @@ void DempApp::Display(bool auto_redraw)
 			fourthquestion2 = 0;
 			fourthquestion3 = 0;
 			fourthquestion4 = 0;
+			flowerMove = 0;
+			goombaMove[0] = 0;
+			goombax[0] = 1.804;
+			goombay[0] = 0;
+			goombadirect[0] = -0.005;
+			goombaDead[0] = 0;
+			goombaalive[0] = 1;
+			floweralive = 1;
 			for (int i = 0; i < 12; i++)
 				fifthquestion[i] = 0;
 			state = STANDING;
@@ -296,6 +309,98 @@ void DempApp::Display(bool auto_redraw)
 			if (flowerMove > 20)
 				flowerMove = 0;
 		}
+		// goomba1
+
+		if (goombaalive[0])
+		{
+			goombaMove[0]++;
+			if (goombaMove[0] < 10)
+			{
+				glPushMatrix();
+				glTranslated(-0.305 + goombax[0], -0.7 + goombay[0], 0);
+				glBindTexture(GL_TEXTURE_2D, m_goomba1);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0, 0); glVertex2d(-0.05, -0.05);
+				glTexCoord2d(1, 0); glVertex2d(0.05, -0.05);
+				glTexCoord2d(1, 0.984); glVertex2d(0.05, 0.1);
+				glTexCoord2d(0, 0.984); glVertex2d(-0.05, 0.1);
+				glEnd();
+				glPopMatrix();
+			}
+			else
+			{
+				glPushMatrix();
+				glTranslated(-0.305 + goombax[0], -0.7 + goombay[0], 0);
+				glBindTexture(GL_TEXTURE_2D, m_goomba2);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0, 0); glVertex2d(-0.05, -0.05);
+				glTexCoord2d(1, 0); glVertex2d(0.05, -0.05);
+				glTexCoord2d(1, 0.984); glVertex2d(0.05, 0.1);
+				glTexCoord2d(0, 0.984); glVertex2d(-0.05, 0.1);
+				glEnd();
+				glPopMatrix();
+				if (goombaMove[0] > 20)
+					goombaMove[0] = 0;
+			}
+			//移動
+			if (goombax[0] < 1.351)
+			{
+				goombadirect[0] = 0.005;
+			}
+			else if (goombax[0] > 2.067)
+			{
+				goombadirect[0] = -0.005;
+			}
+			goombax[0] += goombadirect[0];
+		}
+		else //死
+		{
+			if (goombaDead[0] < 60)
+			{
+				goombaDead[0]++;
+				glPushMatrix();
+				glTranslated(-0.305 + goombax[0], -0.7 + goombay[0], 0);
+				glBindTexture(GL_TEXTURE_2D, m_goombadead);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0, 0); glVertex2d(-0.05, -0.05);
+				glTexCoord2d(1, 0); glVertex2d(0.05, -0.05);
+				glTexCoord2d(1, 0.984); glVertex2d(0.05, 0.1);
+				glTexCoord2d(0, 0.984); glVertex2d(-0.05, 0.1);
+				glEnd();
+				glPopMatrix();
+			}
+		}
+		// 敵人判定
+		if (die == 0 && abs(goombax[0] - walkingDistanceX) < 0.1 && abs(goombay[0] - walkingDistanceY) < 0.15 && goombaalive[0])
+		{
+			if (inair == FALLING)
+			{
+				goombaalive[0] = 0;
+				jumpGroundHeight = walkingDistanceY - 0.45;
+				risingSpeed = 2;
+				inair = RISING;
+			}
+			else
+			{
+				die = 2;
+				PlaySoundA((LPCSTR) "Media\\Audio\\smb_mariodie.wav", NULL, SND_FILENAME | SND_ASYNC);
+				lives--;
+				controlAble = 0;
+				speed = 0;
+				state = DEAD;
+				inair = STANDING;
+			}
+		}
+		else if (die == 0 && abs(13.657 - walkingDistanceX) < 0.1 && abs(0.345 - walkingDistanceY) < 0.15 && floweralive)
+		{
+			die = 2;
+			PlaySoundA((LPCSTR) "Media\\Audio\\smb_mariodie.wav", NULL, SND_FILENAME | SND_ASYNC);
+			lives--;
+			controlAble = 0;
+			speed = 0;
+			state = DEAD;
+			inair = STANDING;
+		}
 		// 第一個問號 低
 		renderBlock(1.539, 0.4, firstlowquestion);
 		// 第一個問號 高
@@ -364,6 +469,7 @@ void DempApp::Display(bool auto_redraw)
 		std::cout << "now:" << walkingDistanceX << std::endl;
 		std::cout << "height" << walkingDistanceY << std::endl;
 		std::cout << "risingSpeed: " << risingSpeed << std::endl;
+		std::cout << "inair: " << inair << std::endl;
 #endif // DEBUG
 
 		if (die == 1)
@@ -371,7 +477,7 @@ void DempApp::Display(bool auto_redraw)
 			if (lives > 0)
 			{
 				dietimer++;
-				if (dietimer > 120)
+				if (dietimer > 180)
 				{
 					dietimer = 0;
 					startGame = 2;
@@ -381,9 +487,56 @@ void DempApp::Display(bool auto_redraw)
 			}
 			else
 			{
-				gluLookAt(-screenmiddle, 0, 0, -screenmiddle, 0, -1, 0, 1, 0);
-				screenmiddle = 0;
-				startGame = 3;
+				dietimer++;
+				if (dietimer > 180)
+				{
+					dietimer = 0;
+					gluLookAt(-screenmiddle, 0, 0, -screenmiddle, 0, -1, 0, 1, 0);
+					screenmiddle = 0;
+					startGame = 3;
+				}
+
+			}
+		}
+		else if (die == 2)
+		{
+			if (lives > 0)
+			{
+				dietimer++;
+				if (dietimer > 30 && dietimer < 55)
+				{
+						walkingDistanceY += 0.025;
+				}
+				if(dietimer > 55 && walkingDistanceY > -1)
+				{
+					walkingDistanceY -= 0.05;
+				}
+				if (dietimer > 180)
+				{
+					dietimer = 0;
+					startGame = 2;
+					gluLookAt(-screenmiddle, 0, 0, -screenmiddle, 0, -1, 0, 1, 0);
+					screenmiddle = 0;
+				}
+			}
+			else
+			{
+				dietimer++;
+				if (dietimer > 30 && dietimer < 55)
+				{
+					walkingDistanceY += 0.025;
+				}
+				if (dietimer > 55 && walkingDistanceY > -1)
+				{
+					walkingDistanceY -= 0.05;
+				}
+				if (dietimer > 180)
+				{
+					dietimer = 0;
+					gluLookAt(-screenmiddle, 0, 0, -screenmiddle, 0, -1, 0, 1, 0);
+					screenmiddle = 0;
+					startGame = 3;
+				}
 			}
 		}
 		else if (endGame == 0)
@@ -425,9 +578,9 @@ void DempApp::Display(bool auto_redraw)
 					if (risingSpeed <= 2)
 						risingSpeed = 2;
 
-					walkingDistanceY += 0.02*risingSpeed;
+					
 				}
-
+				walkingDistanceY += 0.02*risingSpeed;
 				if (walkingDistanceY > 0.65 + jumpGroundHeight)
 				{
 					inair = FLOATING;
@@ -455,6 +608,7 @@ void DempApp::Display(bool auto_redraw)
 			{
 				die = 1;
 				lives--;
+				PlaySoundA((LPCSTR) "Media\\Audio\\smb_mariodie.wav", NULL, SND_FILENAME | SND_ASYNC);
 				controlAble = 0;
 			}
 		}
@@ -511,6 +665,19 @@ void DempApp::Display(bool auto_redraw)
 					gluLookAt(-screenmiddle, 0, 0, -screenmiddle, 0, -1, 0, 1, 0);
 				}
 			}
+		}
+		else if (state == DEAD)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.41666, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.45572, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.45572, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.41666, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
 		}
 		else if (right)	//向右
 		{
