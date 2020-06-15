@@ -16,7 +16,9 @@
 #define CROUCH 3
 #define DEAD 4
 
-#define MAX_SPEED 10
+//#define MAX_SPEED 10
+int MAX_SPEED = 5;
+
 
 #define STANDING 0
 #define RISING 1
@@ -234,6 +236,7 @@ void DempApp::Display(bool auto_redraw)
 			goombaDead[0] = 0;
 			goombaalive[0] = 1;
 			floweralive = 1;
+			MAX_SPEED = 5;
 			for (int i = 0; i < 12; i++)
 				fifthquestion[i] = 0;
 			state = STANDING;
@@ -787,29 +790,29 @@ void DempApp::KeyDown(int key)
 	InitGlutInput::KeyDown(key);
 	if (controlAble)
 	{
-		if (key == 'q')
+		/*if (key == 'q')
 		{
 			walkingDistanceY += 0.01;
 		}
 		if (key == 'a')
 		{
 			walkingDistanceY -= 0.01;
-		}
-		if (key == KEY_RIGHT)
+		}*/
+		if (key == 'd')
 		{
 			state = WALKING;
 			RightButtonDown = true;
 			LeftButtonDown = false;
 			right = 1;
 		}
-		if (key == KEY_LEFT)
+		if (key == 'a')
 		{
 			state = WALKING;
 			LeftButtonDown = true;
 			RightButtonDown = false;
 			right = 0;
 		}
-		if (key == KEY_UP)
+		if (key == 'g')
 		{
 			if (inair == STANDING)
 			{
@@ -817,6 +820,10 @@ void DempApp::KeyDown(int key)
 				//PlaySoundA((LPCSTR) "Media\\Audio\\smb_jump-small.wav", NULL, SND_FILENAME | SND_ASYNC);
 				UpButtonDown = true;
 			}
+		}
+		if (key == 'f')
+		{
+			MAX_SPEED = 10;
 		}
 	}
 	if (key == 'r')
@@ -837,7 +844,7 @@ void DempApp::KeyUp(int key)
 	InitGlutInput::KeyUp(key);
 	if (controlAble)
 	{
-		if (key == KEY_RIGHT)
+		if (key =='d')
 		{
 			if (right)
 			{
@@ -847,7 +854,7 @@ void DempApp::KeyUp(int key)
 				pressTime = 0;
 			}
 		}
-		if (key == KEY_LEFT)
+		if (key == 'a')
 		{
 			if (right == 0)
 			{
@@ -857,12 +864,16 @@ void DempApp::KeyUp(int key)
 				pressTime = 0;
 			}
 		}
-		if (key == KEY_UP)
+		if (key == 'g')
 		{
 			UpButtonDown = false;
 			pressTimeUp = 0;
 			if (inair == RISING)
 				inair = FLOATING;
+		}
+		if (key == 'f')
+		{
+			MAX_SPEED = 5;
 		}
 	}
 }
