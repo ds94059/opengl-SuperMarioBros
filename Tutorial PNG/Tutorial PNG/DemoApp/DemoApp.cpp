@@ -114,7 +114,7 @@ void DempApp::Finalize()
 
 float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight = 0, startrange = 0.7, goombax[1] = { 1.804 }, goombay[1] = { 0 }, goombadirect[1] = {-0.005};
 int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove = 0, goombaMove[1] = { 0 }, goombaDead[1] = { 0 };
-int hit = 0;
+int hit = 0, type = 0;
 bool controlAble = 0,//1可控制 0不可
 endGame = 0, isGrowing = false;
 bool firstlowquestion = 0, firsthighquestion = 0, secondlowquestion = 0, secondhighquestion = 0, thirdlowquestion = 0, thirdhighquestion = 0,
@@ -237,6 +237,7 @@ void DempApp::Display(bool auto_redraw)
 			goombaalive[0] = 1;
 			floweralive = 1;
 			MAX_SPEED = 5;
+			type = 0;
 			for (int i = 0; i < 12; i++)
 				fifthquestion[i] = 0;
 			state = STANDING;
@@ -382,6 +383,11 @@ void DempApp::Display(bool auto_redraw)
 				jumpGroundHeight = walkingDistanceY - 0.45;
 				risingSpeed = 2;
 				inair = RISING;
+			}
+			else if (type > 0)
+			{
+				type--;
+				die = 3;
 			}
 			else
 			{
@@ -607,7 +613,7 @@ void DempApp::Display(bool auto_redraw)
 					risingSpeed = 5;
 				walkingDistanceY -= 0.01*risingSpeed;
 			}
-			if (walkingDistanceY < -0.41)
+			if (walkingDistanceY < -1)
 			{
 				die = 1;
 				lives--;
@@ -777,10 +783,12 @@ void DempApp::KeyPress(int key)
 		if (key == 'i')
 		{
 			walkingDistanceY += 0.01;
+			type = 0;
 		}
 		if (key == 'k')
 		{
 			walkingDistanceY -= 0.01;
+			type = 1;
 		}
 	}
 }
@@ -902,29 +910,62 @@ void DempApp::renderStand(int dir)
 {
 	if (dir > 0)
 	{
-		glPushMatrix();
-		glTranslated(-0.305, -0.7, 0);
-		glBindTexture(GL_TEXTURE_2D, m_Mario);
-		glBegin(GL_QUADS);
-		glTexCoord2d(0.458333, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.497395, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.497395, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glTexCoord2d(0.458333, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glEnd();
-		glPopMatrix();
+		if (type == 0)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.458333, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.497395, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.497395, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.458333, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (type == 1)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.458333, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.497395, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.497395, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glTexCoord2d(0.458333, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
+
 	}
 	else
 	{
-		glPushMatrix();
-		glTranslated(-0.305, -0.7, 0);
-		glBindTexture(GL_TEXTURE_2D, m_Mario);
-		glBegin(GL_QUADS);
-		glTexCoord2d(0.497395, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.458333, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.458333, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glTexCoord2d(0.497395, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glEnd();
-		glPopMatrix();
+		if (type == 0)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.497395, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.458333, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.458333, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.497395, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (type ==1)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.497395, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.458333, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.458333, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glTexCoord2d(0.497395, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
 	}
 }
 
@@ -934,84 +975,180 @@ void DempApp::renderWalk(int dir)
 	{
 		if (walkingState < 3)
 		{
-			glPushMatrix();
-			glTranslated(-0.305, -0.7, 0);
-			glBindTexture(GL_TEXTURE_2D, m_Mario);
-			glBegin(GL_QUADS);
-			glTexCoord2d(0.20833333333, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.2447916666666667, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.2447916666666667, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glTexCoord2d(0.20833333333, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glEnd();
-			glPopMatrix();
+			if (type == 0)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.20833333333, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.2447916666666667, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.2447916666666667, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glTexCoord2d(0.20833333333, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+			}
+			else if (type == 1)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.20833333333, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.2447916666666667, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.2447916666666667, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+				glTexCoord2d(0.20833333333, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+			}
 		}
 		else if (walkingState < 6)
 		{
-			glPushMatrix();
-			glTranslated(-0.305, -0.7, 0);
-			glBindTexture(GL_TEXTURE_2D, m_Mario);
-			glBegin(GL_QUADS);
-			glTexCoord2d(0.25, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.2890625, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.2890625, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glTexCoord2d(0.25, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glEnd();
-			glPopMatrix();
+			if (type == 0)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.25, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.2890625, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.2890625, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glTexCoord2d(0.25, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+			}
+			else if (type == 1)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.25, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.2890625, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.2890625, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+				glTexCoord2d(0.25, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+			}
 		}
 		else if (walkingState < 9)
 		{
-			glPushMatrix();
-			glTranslated(-0.305, -0.7, 0);
-			glBindTexture(GL_TEXTURE_2D, m_Mario);
-			glBegin(GL_QUADS);
-			glTexCoord2d(0.29167, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.33073, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.33073, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glTexCoord2d(0.29167, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glEnd();
-			glPopMatrix();
+			if (type == 0)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.29167, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.33073, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.33073, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glTexCoord2d(0.29167, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+			}
+			else if (type == 1)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.29167, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.33073, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.33073, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+				glTexCoord2d(0.29167, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+			}
 		}
 	}
 	else
 	{
 		if (walkingState < 3)
 		{
-			glPushMatrix();
-			glTranslated(-0.305, -0.7, 0);
-			glBindTexture(GL_TEXTURE_2D, m_Mario);
-			glBegin(GL_QUADS);
-			glTexCoord2d(0.2447916666666667, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.20833333333, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.20833333333, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glTexCoord2d(0.2447916666666667, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glEnd();
-			glPopMatrix();
+			if (type == 0)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.2447916666666667, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.20833333333, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.20833333333, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glTexCoord2d(0.2447916666666667, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+			}
+			else if (type == 1)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.2447916666666667, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.20833333333, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.20833333333, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+				glTexCoord2d(0.2447916666666667, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+			}
 		}
 		else if (walkingState < 6)
 		{
-			glPushMatrix();
-			glTranslated(-0.305, -0.7, 0);
-			glBindTexture(GL_TEXTURE_2D, m_Mario);
-			glBegin(GL_QUADS);
-			glTexCoord2d(0.2890625, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.25, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.25, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glTexCoord2d(0.2890625, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glEnd();
-			glPopMatrix();
+			if (type == 0)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.2890625, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.25, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.25, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glTexCoord2d(0.2890625, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+			}
+			else if (type == 1)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.2890625, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.25, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.25, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+				glTexCoord2d(0.2890625, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+			}
 		}
 		else if (walkingState < 9)
 		{
-			glPushMatrix();
-			glTranslated(-0.305, -0.7, 0);
-			glBindTexture(GL_TEXTURE_2D, m_Mario);
-			glBegin(GL_QUADS);
-			glTexCoord2d(0.33073, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.29167, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-			glTexCoord2d(0.29167, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glTexCoord2d(0.33073, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-			glEnd();
-			glPopMatrix();
+			if (type == 0)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.33073, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.29167, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.29167, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glTexCoord2d(0.33073, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+			}
+			else if (type == 1)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_Mario);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0.33073, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.29167, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+				glTexCoord2d(0.29167, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+				glTexCoord2d(0.33073, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+				glEnd();
+				glPopMatrix();
+			}
 		}
 	}
 
@@ -1021,29 +1158,61 @@ void DempApp::renderSlide(int dir)
 {
 	if (dir > 0)
 	{
-		glPushMatrix();
-		glTranslated(-0.305, -0.7, 0);
-		glBindTexture(GL_TEXTURE_2D, m_Mario);
-		glBegin(GL_QUADS);
-		glTexCoord2d(0.33333, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.37239, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.37239, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glTexCoord2d(0.33333, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glEnd();
-		glPopMatrix();
+		if (type == 0)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.33333, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.37239, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.37239, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.33333, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (type == 1)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.33333, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.37239, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.37239, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glTexCoord2d(0.33333, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
 	}
 	else
 	{
-		glPushMatrix();
-		glTranslated(-0.305, -0.7, 0);
-		glBindTexture(GL_TEXTURE_2D, m_Mario);
-		glBegin(GL_QUADS);
-		glTexCoord2d(0.37239, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.33333, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.33333, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glTexCoord2d(0.37239, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glEnd();
-		glPopMatrix();
+		if (type == 0)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.37239, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.33333, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.33333, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.37239, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (type == 1)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.37239, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.33333, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.33333, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glTexCoord2d(0.37239, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
 	}
 }
 
@@ -1051,29 +1220,61 @@ void DempApp::renderJump(int dir)
 {
 	if (dir > 0)
 	{
-		glPushMatrix();
-		glTranslated(-0.305, -0.7, 0);
-		glBindTexture(GL_TEXTURE_2D, m_Mario);
-		glBegin(GL_QUADS);
-		glTexCoord2d(0.375, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.41406, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.41406, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glTexCoord2d(0.375, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glEnd();
-		glPopMatrix();
+		if (type == 0)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.375, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.41406, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.41406, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.375, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (type == 1)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.375, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.41406, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.41406, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glTexCoord2d(0.375, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
 	}
 	else
 	{
-		glPushMatrix();
-		glTranslated(-0.305, -0.7, 0);
-		glBindTexture(GL_TEXTURE_2D, m_Mario);
-		glBegin(GL_QUADS);
-		glTexCoord2d(0.41406, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.375, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.375, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glTexCoord2d(0.41406, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glEnd();
-		glPopMatrix();
+		if (type == 0)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.41406, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.375, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.375, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.41406, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (type == 1)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.41406, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.375, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.375, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glTexCoord2d(0.41406, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
 	}
 }
 
@@ -1081,29 +1282,61 @@ void DempApp::renderFlag(int dir)
 {
 	if (dir > 0)
 	{
-		glPushMatrix();
-		glTranslated(-0.305, -0.7, 0);
-		glBindTexture(GL_TEXTURE_2D, m_Mario);
-		glBegin(GL_QUADS);
-		glTexCoord2d(0.54166, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.58072, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.58072, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glTexCoord2d(0.54166, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glEnd();
-		glPopMatrix();
+		if (type == 0)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.54166, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.58072, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.58072, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.54166, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (type == 1)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.54166, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.58072, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.58072, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glTexCoord2d(0.54166, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
 	}
 	else
 	{
-		glPushMatrix();
-		glTranslated(-0.305, -0.7, 0);
-		glBindTexture(GL_TEXTURE_2D, m_Mario);
-		glBegin(GL_QUADS);
-		glTexCoord2d(0.58072, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.54166, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.54166, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glTexCoord2d(0.58072, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glEnd();
-		glPopMatrix();
+		if (type == 0)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.58072, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.54166, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.54166, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glTexCoord2d(0.58072, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
+		else if (type == 1)
+		{
+			glPushMatrix();
+			glTranslated(-0.305, -0.7, 0);
+			glBindTexture(GL_TEXTURE_2D, m_Mario);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0.58072, 0.93939); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.54166, 0.93939); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
+			glTexCoord2d(0.54166, 1); glVertex2d(0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glTexCoord2d(0.58072, 1); glVertex2d(-0.05 + walkingDistanceX, 0.2 + walkingDistanceY);
+			glEnd();
+			glPopMatrix();
+		}
 	}
 
 }
@@ -1361,7 +1594,12 @@ bool DempApp::haveGround(float x, float y)
 bool DempApp::haveRoof(float x, float y)
 {
 	// 第一個問號 低
-	if (blockRoof(x, y, 1.445, 1.635, 0.25, 0.4))
+	float temp = 0;
+	if (type != 0)
+	{
+		temp = 0.1;
+	}
+	if (blockRoof(x, y+temp, 1.445, 1.635, 0.25, 0.4))
 	{
 		if (!firstlowquestion)
 		{
@@ -1375,7 +1613,7 @@ bool DempApp::haveRoof(float x, float y)
 		return 1;
 	}
 	// 第一個問號 高
-	if (blockRoof(x, y, 1.445, 1.635, 0.8, 0.95))
+	if (blockRoof(x, y+temp, 1.445, 1.635, 0.8, 0.95))
 	{
 		if (!firsthighquestion)
 		{
@@ -1389,7 +1627,7 @@ bool DempApp::haveRoof(float x, float y)
 		return 1;
 	}
 	// 第二個問號 低
-	if (blockRoof(x, y, 4.856, 5.048, 0.25, 0.4))
+	if (blockRoof(x, y+temp, 4.856, 5.048, 0.25, 0.4))
 	{
 		if (!secondlowquestion)
 		{
@@ -1403,7 +1641,7 @@ bool DempApp::haveRoof(float x, float y)
 		return 1;
 	}
 	// 第二個問號 高
-	if (blockRoof(x, y, 4.856, 5.048, 0.8, 0.95))
+	if (blockRoof(x, y+temp, 4.856, 5.048, 0.8, 0.95))
 	{
 		if (!secondhighquestion)
 		{
@@ -1417,7 +1655,7 @@ bool DempApp::haveRoof(float x, float y)
 		return 1;
 	}
 	// 第三個問號 低
-	if (blockRoof(x, y, 5.104, 5.294, 0.25, 0.4))
+	if (blockRoof(x, y+temp, 5.104, 5.294, 0.25, 0.4))
 	{
 		if (!thirdlowquestion)
 		{
@@ -1431,7 +1669,7 @@ bool DempApp::haveRoof(float x, float y)
 		return 1;
 	}
 	// 第三個問號 高
-	if (blockRoof(x, y, 5.104, 5.294, 0.8, 0.95))
+	if (blockRoof(x, y+temp, 5.104, 5.294, 0.8, 0.95))
 	{
 		if (!thirdhighquestion)
 		{
@@ -1445,7 +1683,7 @@ bool DempApp::haveRoof(float x, float y)
 		return 1;
 	}
 	// 第四個問號1
-	if (blockRoof(x, y, 7.124, 7.261, 0.25, 0.4))
+	if (blockRoof(x, y+temp, 7.124, 7.261, 0.25, 0.4))
 	{
 		if (!fourthquestion1)
 		{
@@ -1459,7 +1697,7 @@ bool DempApp::haveRoof(float x, float y)
 		return 1;
 	}
 	// 第四個問號2
-	if (blockRoof(x, y, 7.261, 7.364, 0.25, 0.4))
+	if (blockRoof(x, y+temp, 7.261, 7.364, 0.25, 0.4))
 	{
 		if (!fourthquestion2)
 		{
@@ -1473,7 +1711,7 @@ bool DempApp::haveRoof(float x, float y)
 		return 1;
 	}
 	// 第四個問號3
-	if (blockRoof(x, y, 7.364, 7.468, 0.25, 0.4))
+	if (blockRoof(x, y+temp, 7.364, 7.468, 0.25, 0.4))
 	{
 		if (!fourthquestion3)
 		{
@@ -1487,7 +1725,7 @@ bool DempApp::haveRoof(float x, float y)
 		return 1;
 	}
 	// 第四個問號4
-	if (blockRoof(x, y, 7.468, 7.605, 0.25, 0.4))
+	if (blockRoof(x, y+temp, 7.468, 7.605, 0.25, 0.4))
 	{
 		if (!fourthquestion4)
 		{
@@ -1505,7 +1743,7 @@ bool DempApp::haveRoof(float x, float y)
 	float fifthleft = 11.989;
 	for (int i = 0; i < 8; i++)
 	{
-		if (blockRoof(x, y, fifthleft + i * 0.108875, fifthleft + i * 0.108875 + 0.108875, 0.25, 0.4))
+		if (blockRoof(x, y+temp, fifthleft + i * 0.108875, fifthleft + i * 0.108875 + 0.108875, 0.25, 0.4))
 		{
 			if (!fifthquestion[i])
 			{
@@ -1524,7 +1762,7 @@ bool DempApp::haveRoof(float x, float y)
 	fifthleft += 0.2;
 	for (int i = 0; i < 4; i++)
 	{
-		if (blockRoof(x, y, fifthleft + i * 0.108875, fifthleft + i * 0.108875 + 0.108875, 0.8, 0.95))
+		if (blockRoof(x, y+temp, fifthleft + i * 0.108875, fifthleft + i * 0.108875 + 0.108875, 0.8, 0.95))
 		{
 			if (!fifthquestion[i + 8])
 			{
