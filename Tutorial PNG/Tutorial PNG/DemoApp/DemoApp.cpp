@@ -5,7 +5,7 @@
 #include <windows.h>
 #include <mmsystem.h>
 
-#define DEBUG
+//#define DEBUG
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -152,13 +152,13 @@ void DempApp::Finalize()
 	glDeleteTextures(1, &m_Coin);
 }
 
-float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight = 0, startrange = 0.7, goombax[1] = { 1.804 }, goombay[1] = { 0 }, goombadirect[1] = {-0.005}, shroomx = 1.538, shroomy = 0.41, shroomtimer = 0, shroomalive = 1;
-int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove = 0, goombaMove[1] = { 0 }, goombaDead[1] = { 0 },invisible = 0;
+float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight = 0, startrange = 0.7, goombax[3] = { 1.804 }, goombay[3] = { 0 }, goombadirect[3] = {-0.005}, shroomx = 1.538, shroomy = 0.41, shroomtimer = 0, shroomalive = 1;
+int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove = 0, goombaMove[3] = { 0 }, goombaDead[3] = { 0 },invisible = 0;
 int hit = 0, type = 0;
 bool controlAble = 0,//1可控制 0不可
 endGame = 0, isGrowing = false;
 bool firstlowquestion = 0, firsthighquestion = 0, secondlowquestion = 0, secondhighquestion = 0, thirdlowquestion = 0, thirdhighquestion = 0,
-fourthquestion1 = 0, fourthquestion2 = 0, fourthquestion3 = 0, fourthquestion4 = 0, fifthquestion[12] = { 0 }, goombaalive[1] = { 1 }, floweralive = 1;
+fourthquestion1 = 0, fourthquestion2 = 0, fourthquestion3 = 0, fourthquestion4 = 0, fifthquestion[12] = { 0 }, goombaalive[3] = { 1 }, floweralive = 1;
 
 void DempApp::Display(bool auto_redraw)
 {
@@ -181,6 +181,8 @@ void DempApp::Display(bool auto_redraw)
 		glTexCoord2d(0, 1); glVertex2d(-1, 1);
 		glEnd();
 		glPopMatrix();
+		goombax[1] = 9.14;
+		goombax[2] = 14.9;
 	}
 	else if (startGame == 2)
 	{
@@ -275,6 +277,20 @@ void DempApp::Display(bool auto_redraw)
 			goombadirect[0] = -0.005;
 			goombaDead[0] = 0;
 			goombaalive[0] = 1;
+
+			goombaMove[1] = 0;
+			goombax[1] = 9.14;
+			goombay[1] = 0;
+			goombadirect[1] = -0.005;
+			goombaDead[1] = 0;
+			goombaalive[1] = 1;
+
+			goombaMove[2] = 0;
+			goombax[2] = 14.9;
+			goombay[2] = 0;
+			goombadirect[2] = -0.005;
+			goombaDead[2] = 0;
+			goombaalive[2] = 1;
 			floweralive = 1; 
 			shroomx = 1.538;
 			shroomy = 0.41;
@@ -328,36 +344,40 @@ void DempApp::Display(bool auto_redraw)
 		glPopMatrix();
 
 		// 第一朵花
-		if (flowerMove < 10)
+		if (floweralive)
 		{
-			glPushMatrix();
-			glTranslated(-0.305, -0.7, 0);
-			glBindTexture(GL_TEXTURE_2D, m_FlowerOpen);
-			glBegin(GL_QUADS);
-			glTexCoord2d(0, 0); glVertex2d(13.607, 0.22);
-			glTexCoord2d(1, 0); glVertex2d(13.707, 0.22);
-			glTexCoord2d(1, 1); glVertex2d(13.707, 0.47);
-			glTexCoord2d(0, 1); glVertex2d(13.607, 0.47);
-			glEnd();
-			glPopMatrix();
-			flowerMove++;
+			if (flowerMove < 10)
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_FlowerOpen);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0, 0); glVertex2d(13.607, 0.22);
+				glTexCoord2d(1, 0); glVertex2d(13.707, 0.22);
+				glTexCoord2d(1, 1); glVertex2d(13.707, 0.47);
+				glTexCoord2d(0, 1); glVertex2d(13.607, 0.47);
+				glEnd();
+				glPopMatrix();
+				flowerMove++;
+			}
+			else
+			{
+				glPushMatrix();
+				glTranslated(-0.305, -0.7, 0);
+				glBindTexture(GL_TEXTURE_2D, m_FlowerClose);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0, 0); glVertex2d(13.607, 0.22);
+				glTexCoord2d(1, 0); glVertex2d(13.707, 0.22);
+				glTexCoord2d(1, 1); glVertex2d(13.707, 0.47);
+				glTexCoord2d(0, 1); glVertex2d(13.607, 0.47);
+				glEnd();
+				glPopMatrix();
+				flowerMove++;
+				if (flowerMove > 20)
+					flowerMove = 0;
+			}
 		}
-		else
-		{
-			glPushMatrix();
-			glTranslated(-0.305, -0.7, 0);
-			glBindTexture(GL_TEXTURE_2D, m_FlowerClose);
-			glBegin(GL_QUADS);
-			glTexCoord2d(0, 0); glVertex2d(13.607, 0.22);
-			glTexCoord2d(1, 0); glVertex2d(13.707, 0.22);
-			glTexCoord2d(1, 1); glVertex2d(13.707, 0.47);
-			glTexCoord2d(0, 1); glVertex2d(13.607, 0.47);
-			glEnd();
-			glPopMatrix();
-			flowerMove++;
-			if (flowerMove > 20)
-				flowerMove = 0;
-		}
+		
 		if (firstlowquestion && shroomy>-1&& shroomalive)
 		{
 			shroomtimer++;
@@ -432,6 +452,106 @@ void DempApp::Display(bool auto_redraw)
 				goombaDead[0]++;
 				glPushMatrix();
 				glTranslated(-0.305 + goombax[0], -0.7 + goombay[0], 0);
+				glBindTexture(GL_TEXTURE_2D, m_goombadead);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0, 0); glVertex2d(-0.05, -0.05);
+				glTexCoord2d(1, 0); glVertex2d(0.05, -0.05);
+				glTexCoord2d(1, 0.984); glVertex2d(0.05, 0.1);
+				glTexCoord2d(0, 0.984); glVertex2d(-0.05, 0.1);
+				glEnd();
+				glPopMatrix();
+			}
+		}
+		// goomba2
+		if (goombaalive[1])
+		{
+			goombaMove[1]++;
+			if (goombaMove[1] < 10)
+			{
+				glPushMatrix();
+				glTranslated(-0.305 + goombax[1], -0.7 + goombay[1], 0);
+				glBindTexture(GL_TEXTURE_2D, m_goomba1);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0, 0); glVertex2d(-0.05, -0.05);
+				glTexCoord2d(1, 0); glVertex2d(0.05, -0.05);
+				glTexCoord2d(1, 0.984); glVertex2d(0.05, 0.1);
+				glTexCoord2d(0, 0.984); glVertex2d(-0.05, 0.1);
+				glEnd();
+				glPopMatrix();
+			}
+			else
+			{
+				glPushMatrix();
+				glTranslated(-0.305 + goombax[1], -0.7 + goombay[1], 0);
+				glBindTexture(GL_TEXTURE_2D, m_goomba2);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0, 0); glVertex2d(-0.05, -0.05);
+				glTexCoord2d(1, 0); glVertex2d(0.05, -0.05);
+				glTexCoord2d(1, 0.984); glVertex2d(0.05, 0.1);
+				glTexCoord2d(0, 0.984); glVertex2d(-0.05, 0.1);
+				glEnd();
+				glPopMatrix();
+				if (goombaMove[1] > 20)
+					goombaMove[1] = 0;
+			}
+		}
+		else //死
+		{
+			if (goombaDead[1] < 60)
+			{
+				goombaDead[1]++;
+				glPushMatrix();
+				glTranslated(-0.305 + goombax[1], -0.7 + goombay[1], 0);
+				glBindTexture(GL_TEXTURE_2D, m_goombadead);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0, 0); glVertex2d(-0.05, -0.05);
+				glTexCoord2d(1, 0); glVertex2d(0.05, -0.05);
+				glTexCoord2d(1, 0.984); glVertex2d(0.05, 0.1);
+				glTexCoord2d(0, 0.984); glVertex2d(-0.05, 0.1);
+				glEnd();
+				glPopMatrix();
+			}
+		}
+		// goomba3
+		if (goombaalive[2])
+		{
+			goombaMove[2]++;
+			if (goombaMove[2] < 10)
+			{
+				glPushMatrix();
+				glTranslated(-0.305 + goombax[2], -0.7 + goombay[2], 0);
+				glBindTexture(GL_TEXTURE_2D, m_goomba1);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0, 0); glVertex2d(-0.05, -0.05);
+				glTexCoord2d(1, 0); glVertex2d(0.05, -0.05);
+				glTexCoord2d(1, 0.984); glVertex2d(0.05, 0.1);
+				glTexCoord2d(0, 0.984); glVertex2d(-0.05, 0.1);
+				glEnd();
+				glPopMatrix();
+			}
+			else
+			{
+				glPushMatrix();
+				glTranslated(-0.305 + goombax[2], -0.7 + goombay[2], 0);
+				glBindTexture(GL_TEXTURE_2D, m_goomba2);
+				glBegin(GL_QUADS);
+				glTexCoord2d(0, 0); glVertex2d(-0.05, -0.05);
+				glTexCoord2d(1, 0); glVertex2d(0.05, -0.05);
+				glTexCoord2d(1, 0.984); glVertex2d(0.05, 0.1);
+				glTexCoord2d(0, 0.984); glVertex2d(-0.05, 0.1);
+				glEnd();
+				glPopMatrix();
+				if (goombaMove[2] > 20)
+					goombaMove[2] = 0;
+			}
+		}
+		else //死
+		{
+			if (goombaDead[2] < 60)
+			{
+				goombaDead[2]++;
+				glPushMatrix();
+				glTranslated(-0.305 + goombax[2], -0.7 + goombay[2], 0);
 				glBindTexture(GL_TEXTURE_2D, m_goombadead);
 				glBegin(GL_QUADS);
 				glTexCoord2d(0, 0); glVertex2d(-0.05, -0.05);
@@ -669,6 +789,34 @@ void DempApp::Display(bool auto_redraw)
 				}
 				goombax[0] += goombadirect[0];
 			}
+			// goomba2
+			if (goombaalive[1])
+			{
+				//移動
+				if (goombax[1] < 8.4491)
+				{
+					goombadirect[1] = 0.005;
+				}
+				else if (goombax[1] > 9.4119)
+				{
+					goombadirect[1] = -0.005;
+				}
+				goombax[1] += goombadirect[1];
+			}
+			// goomba3
+			if (goombaalive[2])
+			{
+				//移動
+				if (goombax[2] < 14.8401)
+				{
+					goombadirect[2] = 0.005;
+				}
+				else if (goombax[2] > 15.01)
+				{
+					goombadirect[2] = -0.005;
+				}
+				goombax[2] += goombadirect[2];
+			}
 			if (invisible < 0)
 			{
 				invisible = 0;
@@ -676,6 +824,77 @@ void DempApp::Display(bool auto_redraw)
 			else if (invisible > 0)
 			{
 				invisible--;
+			}
+			if (keyFirePress&& die == 0 && invisible <= 0 && abs(13.657 - walkingDistanceX) < 0.25 && abs(0.345 - walkingDistanceY) < 0.15 && floweralive)
+			{
+				if (13.657 - walkingDistanceX > 0)
+				{
+					if (right == 1)
+					{
+						floweralive = 0;
+					}
+				}
+				else
+				{
+					if (right == -1)
+					{
+						floweralive = 0;
+					}
+				}
+			}
+			else if (keyFirePress&&die == 0 && invisible <= 0 && abs(goombax[0] - walkingDistanceX) < 0.25 && abs(goombay[0] - walkingDistanceY) < 0.15 && goombaalive[0])
+			{
+				if (goombax[0] - walkingDistanceX > 0)
+				{
+					if (right == 1)
+					{
+						goombaalive[0] = 0;
+					}
+				}
+				else
+				{
+					if (right == -1)
+					{
+						goombaalive[0] = 0;
+					}
+				}
+
+			}
+			else if (keyFirePress&&die == 0 && invisible <= 0 && abs(goombax[1] - walkingDistanceX) < 0.25 && abs(goombay[1] - walkingDistanceY) < 0.15 && goombaalive[1])
+			{
+				if (goombax[1] - walkingDistanceX > 0)
+				{
+					if (right == 1)
+					{
+						goombaalive[1] = 0;
+					}
+				}
+				else
+				{
+					if (right == -1)
+					{
+						goombaalive[1] = 0;
+					}
+				}
+
+			}
+			else if (keyFirePress&&die == 0 && invisible <= 0 && abs(goombax[2] - walkingDistanceX) < 0.25 && abs(goombay[2] - walkingDistanceY) < 0.15 && goombaalive[2])
+			{
+				if (goombax[2] - walkingDistanceX > 0)
+				{
+					if (right == 1)
+					{
+						goombaalive[2] = 0;
+					}
+				}
+				else
+				{
+					if (right == -1)
+					{
+						goombaalive[2] = 0;
+					}
+				}
+
 			}
 			//蘑菇判定
 			if (firstlowquestion && die == 0 && abs(shroomx - walkingDistanceX) < 0.1 && abs(shroomy - walkingDistanceY) < 0.1&& shroomalive)
@@ -694,6 +913,62 @@ void DempApp::Display(bool auto_redraw)
 				if (inair == FALLING)
 				{
 					goombaalive[0] = 0;
+					jumpGroundHeight = walkingDistanceY - 0.45;
+					risingSpeed = 2;
+					inair = RISING;
+				}
+				else if (type > 0)
+				{
+					type--;
+					die = 3;
+					controlAble = 0;
+					keyFirePress = false;
+					PlaySoundA((LPCSTR) "Media\\Audio\\smb_pipe.wav", NULL, SND_FILENAME | SND_ASYNC);
+				}
+				else
+				{
+					die = 2;
+					PlaySoundA((LPCSTR) "Media\\Audio\\smb_mariodie.wav", NULL, SND_FILENAME | SND_ASYNC);
+					lives--;
+					controlAble = 0;
+					speed = 0;
+					state = DEAD;
+					inair = STANDING;
+				}
+			}
+			else if (die == 0 && invisible <= 0 && abs(goombax[1] - walkingDistanceX) < 0.1 && abs(goombay[1] - walkingDistanceY) < 0.15 && goombaalive[1])
+			{
+				if (inair == FALLING)
+				{
+					goombaalive[1] = 0;
+					jumpGroundHeight = walkingDistanceY - 0.45;
+					risingSpeed = 2;
+					inair = RISING;
+				}
+				else if (type > 0)
+				{
+					type--;
+					die = 3;
+					controlAble = 0;
+					keyFirePress = false;
+					PlaySoundA((LPCSTR) "Media\\Audio\\smb_pipe.wav", NULL, SND_FILENAME | SND_ASYNC);
+				}
+				else
+				{
+					die = 2;
+					PlaySoundA((LPCSTR) "Media\\Audio\\smb_mariodie.wav", NULL, SND_FILENAME | SND_ASYNC);
+					lives--;
+					controlAble = 0;
+					speed = 0;
+					state = DEAD;
+					inair = STANDING;
+				}
+			}
+			else if (die == 0 && invisible <= 0 && abs(goombax[2] - walkingDistanceX) < 0.1 && abs(goombay[2] - walkingDistanceY) < 0.15 && goombaalive[2])
+			{
+				if (inair == FALLING)
+				{
+					goombaalive[2] = 0;
 					jumpGroundHeight = walkingDistanceY - 0.45;
 					risingSpeed = 2;
 					inair = RISING;
@@ -975,7 +1250,7 @@ void DempApp::Display(bool auto_redraw)
 		{
 
 		}
-		else if (right)	//向右
+		else if (right == 1)	//向右
 		{
 			if (inair != STANDING)
 			{
@@ -1110,7 +1385,7 @@ void DempApp::KeyDown(int key)
 			state = WALKING;
 			LeftButtonDown = true;
 			RightButtonDown = false;
-			right = 0;
+			right = -1;
 		}
 		if (key == 'g')
 		{
@@ -1153,7 +1428,7 @@ void DempApp::KeyUp(int key)
 	{
 		if (key =='d')
 		{
-			if (right)
+			if (right == 1)
 			{
 				RightButtonDown = false;
 				state = STAND;
@@ -1163,7 +1438,7 @@ void DempApp::KeyUp(int key)
 		}
 		if (key == 'a')
 		{
-			if (right == 0)
+			if (right == -1)
 			{
 				LeftButtonDown = false;
 				state = STAND;
@@ -2596,7 +2871,7 @@ void DempApp::renderFire(int right)
 
 
 	float  firePositionX=walkingDistanceX - screenmiddle;
-	if (right == 0)
+	if (right == -1)
 		firePositionX -= 0.08;
 
 	// use Mario.vs & Mario.fs
