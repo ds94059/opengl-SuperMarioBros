@@ -101,9 +101,12 @@ void DempApp::Initialize()
 	m_goomba1 = TextureApp::GenTexture("Media\\Texture\\goombawalk1.png");
 	m_goomba2 = TextureApp::GenTexture("Media\\Texture\\goombawalk2.png");
 	m_goombadead = TextureApp::GenTexture("Media\\Texture\\goombadead.png");
+	m_shroom = TextureApp::GenTexture("Media\\Texture\\shroom.png");
 	m_Pipe = TextureApp::GenTexture("Media\\Texture\\Pipe.png");
 
-
+	m_end1 = TextureApp::GenTexture("Media\\Texture\\win1.png");
+	m_end2 = TextureApp::GenTexture("Media\\Texture\\win2.png");
+	m_end3 = TextureApp::GenTexture("Media\\Texture\\win3.png");
 	initGetCoin();
 	initFire();
 }
@@ -114,8 +117,8 @@ void DempApp::Finalize()
 	glDeleteTextures(1, &m_Coin);
 }
 
-float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight = 0, startrange = 0.7, goombax[1] = { 1.804 }, goombay[1] = { 0 }, goombadirect[1] = {-0.005};
-int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove = 0, goombaMove[1] = { 0 }, goombaDead[1] = { 0 };
+float walkingDistanceX = 0, walkingDistanceY = 0, farestPos = 0, screenmiddle = 0, jumpGroundHeight = 0, startrange = 0.7, goombax[1] = { 1.804 }, goombay[1] = { 0 }, goombadirect[1] = {-0.005}, shroomx = 1.538, shroomy = 0.41, shroomtimer = 0, shroomalive = 1;
+int walkingState = 0, right = 1, state = STAND, pressTime = 0, pressTimeUp = 0, speed = 0, risingSpeed = 5, falltimer = 0, timer = 0, inair = 0, floattimer = 0, endingstep = 0, endtimer = 0, startGame = 0, die = 0, dietimer = 0, starttimer = 0, lives = 3, flowerMove = 0, goombaMove[1] = { 0 }, goombaDead[1] = { 0 },invisible = 0;
 int hit = 0, type = 0;
 bool controlAble = 0,//1可控制 0不可
 endGame = 0, isGrowing = false;
@@ -237,7 +240,11 @@ void DempApp::Display(bool auto_redraw)
 			goombadirect[0] = -0.005;
 			goombaDead[0] = 0;
 			goombaalive[0] = 1;
-			floweralive = 1;
+			floweralive = 1; 
+			shroomx = 1.538;
+			shroomy = 0.41;
+			shroomtimer = 0;
+			shroomalive = 1;
 			MAX_SPEED = 5;
 			type = 0;
 			for (int i = 0; i < 12; i++)
@@ -257,6 +264,7 @@ void DempApp::Display(bool auto_redraw)
 				starttimer = 0;
 				startGame = 1;
 				controlAble = 1;
+				//PlaySoundA((LPCSTR) "Media\\Audio\\smb_powerup.wav", NULL, SND_FILENAME | SND_ASYNC);
 			}
 		}
 	}
@@ -315,8 +323,41 @@ void DempApp::Display(bool auto_redraw)
 			if (flowerMove > 20)
 				flowerMove = 0;
 		}
+		if (firstlowquestion && shroomy>-1&& shroomalive)
+		{
+			shroomtimer++;
+			if (shroomtimer < 14)
+			{
+				shroomy += 0.01;
+			}
+			else if (shroomtimer > 34 && shroomtimer <= 36)
+			{
+				shroomx += 0.005;
+			}
+			else if (shroomtimer > 36)
+			{
+				shroomx += 0.005;
+				if ( shroomx<2.078 && shroomy > 0)
+				{
+					shroomy -= 0.01;
+				}
+				else if(shroomx>2.078)
+				{
+					shroomy -= 0.01;
+				}
+			}
+			glPushMatrix();
+			glTranslated(-0.305 + shroomx, -0.7 + shroomy, 0);
+			glBindTexture(GL_TEXTURE_2D, m_shroom);
+			glBegin(GL_QUADS);
+			glTexCoord2d(0, 0); glVertex2d(-0.05, -0.05);
+			glTexCoord2d(1, 0); glVertex2d(0.05, -0.05);
+			glTexCoord2d(1, 0.984); glVertex2d(0.05, 0.1);
+			glTexCoord2d(0, 0.984); glVertex2d(-0.05, 0.1);
+			glEnd();
+			glPopMatrix();
+		}
 		// goomba1
-
 		if (goombaalive[0])
 		{
 			goombaMove[0]++;
@@ -348,16 +389,6 @@ void DempApp::Display(bool auto_redraw)
 				if (goombaMove[0] > 20)
 					goombaMove[0] = 0;
 			}
-			//移動
-			if (goombax[0] < 1.351)
-			{
-				goombadirect[0] = 0.005;
-			}
-			else if (goombax[0] > 2.067)
-			{
-				goombadirect[0] = -0.005;
-			}
-			goombax[0] += goombadirect[0];
 		}
 		else //死
 		{
@@ -375,42 +406,6 @@ void DempApp::Display(bool auto_redraw)
 				glEnd();
 				glPopMatrix();
 			}
-		}
-		// 敵人判定
-		if (die == 0 && abs(goombax[0] - walkingDistanceX) < 0.1 && abs(goombay[0] - walkingDistanceY) < 0.15 && goombaalive[0])
-		{
-			if (inair == FALLING)
-			{
-				goombaalive[0] = 0;
-				jumpGroundHeight = walkingDistanceY - 0.45;
-				risingSpeed = 2;
-				inair = RISING;
-			}
-			else if (type > 0)
-			{
-				type--;
-				die = 3;
-			}
-			else
-			{
-				die = 2;
-				PlaySoundA((LPCSTR) "Media\\Audio\\smb_mariodie.wav", NULL, SND_FILENAME | SND_ASYNC);
-				lives--;
-				controlAble = 0;
-				speed = 0;
-				state = DEAD;
-				inair = STANDING;
-			}
-		}
-		else if (die == 0 && abs(13.657 - walkingDistanceX) < 0.1 && abs(0.345 - walkingDistanceY) < 0.15 && floweralive)
-		{
-			die = 2;
-			PlaySoundA((LPCSTR) "Media\\Audio\\smb_mariodie.wav", NULL, SND_FILENAME | SND_ASYNC);
-			lives--;
-			controlAble = 0;
-			speed = 0;
-			state = DEAD;
-			inair = STANDING;
 		}
 		// 第一個問號 低
 		renderBlock(1.539, 0.4, firstlowquestion);
@@ -468,7 +463,7 @@ void DempApp::Display(bool auto_redraw)
 
 		timer++;
 
-		walkingDistanceX += 0.002*speed;
+		if(controlAble)walkingDistanceX += 0.002*speed;
 		// 最遠距離
 		if (farestPos < walkingDistanceX)
 		{
@@ -551,6 +546,67 @@ void DempApp::Display(bool auto_redraw)
 				}
 			}
 		}
+		else if (die == 3)
+		{
+			dietimer++;
+			if (dietimer < 10)
+			{
+				type = 0;
+			}
+			else if (dietimer < 20)
+			{
+				type = 1;
+			}
+			else if (dietimer < 30)
+			{
+				type = 0;
+			}
+			else if (dietimer < 40)
+			{
+				type = 1;
+			}
+			else if (dietimer < 50)
+			{
+				type = 0;
+			}
+				if (dietimer > 60)
+				{
+					dietimer = 0;
+					die = 0;
+					controlAble = 1;
+					invisible = 60;
+				}
+		}
+		else if (die == 4)
+		{
+			dietimer++;
+			if (dietimer < 10)
+			{
+				type = 1;
+			}
+			else if (dietimer < 20)
+			{
+				type = 0;
+			}
+			else if (dietimer < 30)
+			{
+				type = 1;
+			}
+			else if (dietimer < 40)
+			{
+				type = 0;
+			}
+			else if (dietimer < 50)
+			{
+				type = 1;
+			}
+			if (dietimer > 60)
+			{
+				dietimer = 0;
+				die = 0;
+				controlAble = 1;
+			}
+		}
 		else if (endGame == 0)
 		{
 			// 螢幕中心點 起始為0
@@ -563,6 +619,91 @@ void DempApp::Display(bool auto_redraw)
 				}
 			}
 			walls();
+
+			// goomba1
+			if (goombaalive[0])
+			{
+				//移動
+				if (goombax[0] < 1.351)
+				{
+					goombadirect[0] = 0.005;
+				}
+				else if (goombax[0] > 2.067)
+				{
+					goombadirect[0] = -0.005;
+				}
+				goombax[0] += goombadirect[0];
+			}
+			if (invisible < 0)
+			{
+				invisible = 0;
+			}
+			else if (invisible > 0)
+			{
+				invisible--;
+			}
+			//蘑菇判定
+			if (firstlowquestion && die == 0 && abs(shroomx - walkingDistanceX) < 0.1 && abs(shroomy - walkingDistanceY) < 0.1&& shroomalive)
+			{
+				type++;
+				die = 4;
+				controlAble = 0;
+				keyFirePress = false;
+				shroomalive = 0;
+				PlaySoundA((LPCSTR) "Media\\Audio\\smb_powerup.wav", NULL, SND_FILENAME | SND_ASYNC);
+
+			}
+			// 敵人判定
+			else if (die == 0  && invisible <= 0&& abs(goombax[0] - walkingDistanceX) < 0.1 && abs(goombay[0] - walkingDistanceY) < 0.15 && goombaalive[0])
+			{
+				if (inair == FALLING)
+				{
+					goombaalive[0] = 0;
+					jumpGroundHeight = walkingDistanceY - 0.45;
+					risingSpeed = 2;
+					inair = RISING;
+				}
+				else if (type > 0)
+				{
+					type--;
+					die = 3;
+					controlAble = 0;
+					keyFirePress = false;
+					PlaySoundA((LPCSTR) "Media\\Audio\\smb_pipe.wav", NULL, SND_FILENAME | SND_ASYNC);
+				}
+				else
+				{
+					die = 2;
+					PlaySoundA((LPCSTR) "Media\\Audio\\smb_mariodie.wav", NULL, SND_FILENAME | SND_ASYNC);
+					lives--;
+					controlAble = 0;
+					speed = 0;
+					state = DEAD;
+					inair = STANDING;
+				}
+			}
+			else if (die == 0 && invisible <= 0&&abs(13.657 - walkingDistanceX) < 0.1 && abs(0.345 - walkingDistanceY) < 0.15 && floweralive)
+			{
+				if (type > 0)
+				{
+					type--;
+					die = 3;
+					controlAble = 0;
+					keyFirePress = false;
+					PlaySoundA((LPCSTR) "Media\\Audio\\smb_pipe.wav", NULL, SND_FILENAME | SND_ASYNC);
+				}
+				else
+				{
+					die = 2;
+					PlaySoundA((LPCSTR) "Media\\Audio\\smb_mariodie.wav", NULL, SND_FILENAME | SND_ASYNC);
+					lives--;
+					controlAble = 0;
+					speed = 0;
+					state = DEAD;
+					inair = STANDING;
+				}
+
+			}
 
 			// 下墜 天花板 判定
 			if ((haveGround(walkingDistanceX, walkingDistanceY) == 1) && inair != RISING)
@@ -628,6 +769,7 @@ void DempApp::Display(bool auto_redraw)
 		// 拉到旗子
 		if (endGame == 1)
 		{
+			keyFirePress = false;
 			if (endingstep == 0)
 			{
 				renderFlag(1);
@@ -649,6 +791,7 @@ void DempApp::Display(bool auto_redraw)
 				else if (endtimer > 90)
 				{
 					endingstep = 2;
+					PlaySoundA((LPCSTR) "Media\\Audio\\smb_stage_clear.wav", NULL, SND_FILENAME | SND_ASYNC);
 					endtimer = 0;
 				}
 				else
@@ -673,8 +816,71 @@ void DempApp::Display(bool auto_redraw)
 				if (endtimer > 120)
 				{
 					endingstep = 4;
-					startGame = 3;
+					//startGame = 3;
+					endtimer = 0;
 					gluLookAt(-screenmiddle, 0, 0, -screenmiddle, 0, -1, 0, 1, 0);
+				}
+			}
+			else if (endingstep == 4)
+			{
+				if (endtimer < 30)
+				{
+					glPushMatrix();
+					glBindTexture(GL_TEXTURE_2D, m_end1);
+					glBegin(GL_QUADS);
+					glTexCoord2d(0, 0); glVertex2d(-1, -1);
+					glTexCoord2d(1, 0); glVertex2d(1, -1);
+					glTexCoord2d(1, 1); glVertex2d(1, 1);
+					glTexCoord2d(0, 1); glVertex2d(-1, 1);
+					glEnd();
+					glPopMatrix();
+				}
+				else if (endtimer < 60)
+				{
+					glPushMatrix();
+					glBindTexture(GL_TEXTURE_2D, m_end2);
+					glBegin(GL_QUADS);
+					glTexCoord2d(0, 0); glVertex2d(-1, -1);
+					glTexCoord2d(1, 0); glVertex2d(1, -1);
+					glTexCoord2d(1, 1); glVertex2d(1, 1);
+					glTexCoord2d(0, 1); glVertex2d(-1, 1);
+					glEnd();
+					glPopMatrix();
+				}
+				else if (endtimer < 180)
+				{
+					glPushMatrix();
+					glBindTexture(GL_TEXTURE_2D, m_end3);
+					glBegin(GL_QUADS);
+					glTexCoord2d(0, 0); glVertex2d(-1, -1);
+					glTexCoord2d(1, 0); glVertex2d(1, -1);
+					glTexCoord2d(1, 1); glVertex2d(1, 1);
+					glTexCoord2d(0, 1); glVertex2d(-1, 1);
+					glEnd();
+					glPopMatrix();
+				}
+				else
+				{
+					startGame = 3;
+				}
+				if (endtimer == 0)
+				{
+					walkingDistanceX = -0.658;
+					walkingDistanceY = 0;
+					endtimer++;
+				}
+				if (walkingDistanceX > 0.296)
+				{
+					renderStand(1);
+					endtimer++;
+				}
+				else
+				{
+					walkingDistanceX += 0.005;
+					renderWalk(1);
+					walkingState++;
+					if (walkingState == 9)
+						walkingState = 0;
 				}
 			}
 		}
@@ -690,6 +896,10 @@ void DempApp::Display(bool auto_redraw)
 			glTexCoord2d(0.41666, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
 			glEnd();
 			glPopMatrix();
+		}
+		else if (invisible > 0 && invisible % 5 == 0)
+		{
+
 		}
 		else if (right)	//向右
 		{
@@ -829,14 +1039,20 @@ void DempApp::KeyDown(int key)
 			if (inair == STANDING)
 			{
 				inair = RISING;
-				//PlaySoundA((LPCSTR) "Media\\Audio\\smb_jump-small.wav", NULL, SND_FILENAME | SND_ASYNC);
+				PlaySoundA(TEXT( "Media\\Audio\\smb_jump-small.wav"), NULL, SND_FILENAME | SND_ASYNC);
 				UpButtonDown = true;
 			}
 		}
 		if (key == 'f')
 		{
 			MAX_SPEED = 10;
-			keyFirePress = true;
+		}
+		if (key == 'h')
+		{
+			if (type > 0)
+			{
+				keyFirePress = true;
+			}
 		}
 	}
 	if (key == 'r')
@@ -887,6 +1103,9 @@ void DempApp::KeyUp(int key)
 		if (key == 'f')
 		{
 			MAX_SPEED = 5;
+		}
+		if (key == 'h')
+		{
 			keyFirePress = false;
 		}
 	}
@@ -1609,8 +1828,8 @@ bool DempApp::haveRoof(float x, float y)
 	{
 		if (!firstlowquestion)
 		{
-			PlaySoundA((LPCSTR) "Media\\Audio\\smb_coin.wav", NULL, SND_FILENAME | SND_ASYNC);
-			hit = 1;
+			PlaySoundA((LPCSTR) "Media\\Audio\\smb_powerup_appears.wav", NULL, SND_FILENAME | SND_ASYNC);
+			//hit = 1;
 			timer = 0;
 			question.x = 1.539;
 			question.y = 0.4;
@@ -2206,6 +2425,7 @@ void DempApp::walls()
 		else
 		{
 			endGame = 1;
+			PlaySoundA((LPCSTR) "Media\\Audio\\smb_flagpole.wav", NULL, SND_FILENAME | SND_ASYNC);
 			LeftButtonDown = false;
 			RightButtonDown = false;
 			state = STAND;
@@ -2310,7 +2530,7 @@ void DempApp::renderFire(int right)
 	glUniform1i(GL_fireTimer, timer);
 	glUniformMatrix4fv(GL_fireMatrix, 1, GL_FALSE, &fireMatrix[0][0]);
 	glUniform1f(GL_fireTranslateX, firePositionX);
-	glUniform1f(GL_fireTranslateY, walkingDistanceY);
+	glUniform1f(GL_fireTranslateY, walkingDistanceY+0.1);
 	glUniform1i(GL_right,right);
 
 	// draw VAO

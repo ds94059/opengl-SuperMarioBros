@@ -42,6 +42,10 @@ private:
 	GLuint m_goomba1;
 	GLuint m_goomba2;
 	GLuint m_goombadead;
+	GLuint m_shroom;
+	GLuint m_end1;
+	GLuint m_end2;
+	GLuint m_end3;
 	typedef const CHAR* JUMP;
 	// uniform parameter
 	GLfloat GL_coinTranslateX,GL_coinTranslateY,GL_fireTranslateX,GL_fireTranslateY;
