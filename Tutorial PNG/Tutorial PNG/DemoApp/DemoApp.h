@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <string>
+#include<cmath>
 using namespace glm;
 
 
@@ -38,6 +39,9 @@ private:
 	GLuint m_question1;
 	GLuint m_question2;
 	GLuint m_Noise;
+	GLuint m_goomba1;
+	GLuint m_goomba2;
+	GLuint m_goombadead;
 	typedef const CHAR* JUMP;
 	// uniform parameter
 	GLfloat GL_coinTranslateX,GL_coinTranslateY,GL_fireTranslateX,GL_fireTranslateY;
