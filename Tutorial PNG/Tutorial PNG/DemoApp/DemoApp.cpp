@@ -27,8 +27,9 @@
 bool RightButtonDown = false;
 bool LeftButtonDown = false;
 bool UpButtonDown = false;
+bool keyFirePress = false;
 
-GLuint program;
+GLuint program, program_fire;
 unsigned int quadVAO, quadVBO;
 unsigned int framebuffer;
 unsigned int textureColorbuffer;
@@ -79,7 +80,7 @@ void DempApp::Initialize()
 	InitOpenGLApp::Initialize("App", 140, 140, 1200, 720);
 	InitGlutInput::Initialize();
 	m_Background = TextureApp::GenTexture("Media\\Texture\\ourmap.png");
-	m_Coin = TextureApp::GenTexture("Media\\Texture\\Coin.png");
+	//m_Coin = TextureApp::GenTexture("Media\\Texture\\Coin.png");
 	m_Mario = TextureApp::GenTexture("Media\\Texture\\Mario2.png");
 	m_Start = TextureApp::GenTexture("Media\\Texture\\startpage.jpg");
 	m_End = TextureApp::GenTexture("Media\\Texture\\gameover.jpg");
@@ -96,7 +97,8 @@ void DempApp::Initialize()
 	m_Pipe = TextureApp::GenTexture("Media\\Texture\\Pipe.png");
 
 
-	initMarioTexture();
+	initGetCoin();
+	initFire();
 }
 
 
@@ -336,7 +338,8 @@ void DempApp::Display(bool auto_redraw)
 		renderBlock(12.475, 0.95, fifthquestion[10]);
 		renderBlock(12.575, 0.95, fifthquestion[11]);
 
-
+		if (keyFirePress)
+			renderFire(right);
 		//// 水管
 		//glPushMatrix();
 		//glScaled(0.2, 0.2, 0);
@@ -583,6 +586,7 @@ void DempApp::Display(bool auto_redraw)
 		}*/
 	}
 
+
 	//glDisable(GL_ALPHA_TEST);
 	glDisable(GL_BLEND);
 	glDisable(GL_TEXTURE_2D);
@@ -651,6 +655,10 @@ void DempApp::KeyDown(int key)
 				UpButtonDown = true;
 			}
 		}
+		if (key == 'g')
+		{
+			keyFirePress = true;
+		}
 	}
 	if (key == 'r')
 	{
@@ -696,6 +704,10 @@ void DempApp::KeyUp(int key)
 			pressTimeUp = 0;
 			if (inair == RISING)
 				inair = FLOATING;
+		}
+		if (key == 'g')
+		{
+			keyFirePress = false;
 		}
 	}
 }
@@ -1870,40 +1882,86 @@ unsigned int DempApp::loadTexture(std::string path, int imageType)
 	return textureID;
 }
 
-void DempApp::renderMarioGrowing()
+void DempApp::renderFire(int right)
 {
-	/*for (int i = 0; i < 100; i++)
-	{
-		glPushMatrix();
-		glTranslated(-0.305, -0.7, 0);
-		glScaled(1, timer*0.3 + 1, 1);
-		glBindTexture(GL_TEXTURE_2D, m_Mario);
-		glBegin(GL_QUADS);
-		glTexCoord2d(0.20833333333, 0.91098); glVertex2d(-0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.2447916666666667, 0.91098); glVertex2d(0.05 + walkingDistanceX, -0.05 + walkingDistanceY);
-		glTexCoord2d(0.2447916666666667, 0.9385); glVertex2d(0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glTexCoord2d(0.20833333333, 0.9385); glVertex2d(-0.05 + walkingDistanceX, 0.1 + walkingDistanceY);
-		glEnd();
-		glPopMatrix();
-	}*/
+	//fireMatrix = fireMatrix * translate(walkingDistanceX-screenmiddle ,0 , 0);
+	float  firePositionX=walkingDistanceX - screenmiddle;
+	if (right == 0)
+		firePositionX -= 0.08;
+
+	// use Mario.vs & Mario.fs
+	glUseProgram(program_fire);
+
+	// draw texture
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, m_Noise);
+
+	// pass uniform value
+	glUniform1i(GL_fireTimer, timer);
+	glUniformMatrix4fv(GL_fireMatrix, 1, GL_FALSE, &fireMatrix[0][0]);
+	glUniform1f(GL_fireTranslateX, firePositionX);
+	glUniform1f(GL_fireTranslateY, walkingDistanceY);
+	glUniform1i(GL_right,right);
+
+	// draw VAO
+	glBindVertexArray(fireVAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	// free binding
+	glBindVertexArray(0);
+	glUseProgram(0);
+}
+
+void DempApp::initFire()
+{
+	fireMatrix = fireMatrix * scale(0.3, 0.3, 1);
+	//fireMatrix = fireMatrix * translate(-0.305, -0.7, 0);
+
+	ShaderInfo shaders[] = {
+		   { GL_VERTEX_SHADER, "Fire.vs" },//vertex shader
+		   { GL_FRAGMENT_SHADER, "Fire.fs" },//fragment shader
+		   { GL_NONE, NULL } };
+	program_fire = LoadShaders(shaders);//讀取shader
+	glUseProgram(program_fire);//uniform參數數值前必須先use shader
+
+	// uniform value setting
+	GL_fireTimer = glGetUniformLocation(program_fire, "timer");
+	GL_fireMatrix = glGetUniformLocation(program_fire, "fireMatrix");
+	GL_fireTranslateX = glGetUniformLocation(program_fire, "translateX");
+	GL_fireTranslateY = glGetUniformLocation(program_fire, "translateY");
+	GL_right= glGetUniformLocation(program_fire, "right");
+
+	///////////////draw
+	glGenVertexArrays(1, &fireVAO);
+	glGenBuffers(1, &fireVBO);
+	glGenBuffers(1, &fireEBO);
+
+	glBindVertexArray(fireVAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, fireVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(fireVertices), fireVertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, fireEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// texcoord attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
+	m_Noise = loadTexture("Media\\Texture\\noise.png", GL_RGBA);
+	glBindVertexArray(0);
+	glUseProgram(0);
 }
 
 void DempApp::renderGetCoin()
 {
 	if (hit)
 	{
-		/*glPushMatrix();
-		glTranslated(-0.305, -0.7, 0);
-		glBindTexture(GL_TEXTURE_2D, m_Coin);
-		glBegin(GL_QUADS);
-		glTexCoord2d(0, 0); glVertex2d(-0.05 + question.x, -0.05 + question.y + timer * 0.02);
-		glTexCoord2d(1, 0); glVertex2d(0.05 + question.x, -0.05 + question.y + timer * 0.02);
-		glTexCoord2d(1, 1); glVertex2d(0.05 + question.x, 0.1 + question.y + timer * 0.02);
-		glTexCoord2d(0, 1); glVertex2d(-0.05 + question.x, 0.1 + question.y + timer * 0.02);
-		glEnd();
-		glPopMatrix();*/
-
-		coinMatrix = coinMatrix * rotate(20, 1, 0, 0);
+		coinMatrix = coinMatrix * rotate(10, 0, 1, 0);
 
 		// use Mario.vs & Mario.fs
 		glUseProgram(program);
@@ -1913,13 +1971,13 @@ void DempApp::renderGetCoin()
 		glBindTexture(GL_TEXTURE_2D, m_Coin);
 
 		// pass uniform value
-		glUniform1f(translateX, question.x - screenmiddle);
-		glUniform1f(translateY, question.y + 0.2);
-		glUniform1i(GL_timer, timer);
+		glUniform1f(GL_coinTranslateX, question.x - screenmiddle);
+		glUniform1f(GL_coinTranslateY, question.y + 0.2);
+		glUniform1i(GL_coinTimer, timer);
 		glUniformMatrix4fv(GL_coinMatrix, 1, GL_FALSE, &coinMatrix[0][0]);
 
 		// draw VAO
-		glBindVertexArray(marioVAO);
+		glBindVertexArray(coinVAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		// free binding
@@ -1931,7 +1989,7 @@ void DempApp::renderGetCoin()
 	}
 }
 
-void DempApp::initMarioTexture()
+void DempApp::initGetCoin()
 {
 	//////////////////////////pass texture to shader
 	///////////////initial
@@ -1943,22 +2001,22 @@ void DempApp::initMarioTexture()
 	glUseProgram(program);//uniform參數數值前必須先use shader
 
 	// uniform value setting
-	translateX = glGetUniformLocation(program, "translateX");
-	translateY = glGetUniformLocation(program, "translateY");
-	GL_timer = glGetUniformLocation(program, "timer");
+	GL_coinTranslateX = glGetUniformLocation(program, "translateX");
+	GL_coinTranslateY = glGetUniformLocation(program, "translateY");
+	GL_coinTimer = glGetUniformLocation(program, "timer");
 	GL_coinMatrix = glGetUniformLocation(program, "coinMatrix");
 
 	///////////////draw
-	glGenVertexArrays(1, &marioVAO);
-	glGenBuffers(1, &marioVBO);
-	glGenBuffers(1, &marioEBO);
+	glGenVertexArrays(1, &coinVAO);
+	glGenBuffers(1, &coinVBO);
+	glGenBuffers(1, &coinEBO);
 
-	glBindVertexArray(marioVAO);
+	glBindVertexArray(coinVAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, marioVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, coinVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, marioEBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, coinEBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	// position attribute

@@ -19,7 +19,7 @@ private:
 	{
 		float x, y;
 	} question;
-	mat4 coinMatrix;
+	mat4 coinMatrix,fireMatrix;
 
 	// textureID
 	GLuint m_Coin;
@@ -37,21 +37,31 @@ private:
 	GLuint m_Pipe;
 	GLuint m_question1;
 	GLuint m_question2;
+	GLuint m_Noise;
 	typedef const CHAR* JUMP;
 	// uniform parameter
-	GLfloat translateX,translateY;
-	GLuint GL_timer;
+	GLfloat GL_coinTranslateX,GL_coinTranslateY,GL_fireTranslateX,GL_fireTranslateY;
+	GLuint GL_coinTimer,GL_fireTimer, GL_right;
 	GLuint GL_coinMatrix;
+	GLuint GL_fireMatrix;
 
 	// VAO, VBO, EBO
-	GLuint marioVAO, marioVBO, marioEBO;
+	GLuint coinVAO, coinVBO, coinEBO;
+	GLuint fireVAO, fireVBO, fireEBO;
 	
 	float vertices[32] = { // (0,0)¦b¥ª¤W
-		// positions          // colors           // texture coords
-		-0.05f, -0.05f, 0.0f,   0.0f, 0.0f, 1.0f,   0, 1, // bottom left
-		 0.05f, -0.05f, 0.0f,   0.0f, 1.0f, 0.0f,   1, 1, // bottom right
-		 0.05f,  0.1f, 0.0f,   1.0f, 0.0f, 0.0f,   1, 0, // top right
-		-0.05f,  0.1f, 0.0f,   0.0f, 0.0f, 1.0f,   0, 0  // top left
+		// positions           // colors           // texture coords
+		-0.05f, -0.05f, 0.0f,  0.0f, 0.0f, 1.0f,   0, 1, // bottom left
+		 0.05f, -0.05f, 0.0f,  0.0f, 1.0f, 0.0f,   1, 1, // bottom right
+		 0.05f,  0.1f, 0.0f,   1.0f, 0.0f, 0.0f,   1, 0,  // top right
+		-0.05f,  0.1f, 0.0f,   0.0f, 0.0f, 1.0f,   0, 0   // top left
+	};
+	float fireVertices[32] = {
+		// positions         // colors           // texture coords
+		-1.0f, -1.0f, 0.0f,  0.0f, 0.0f, 1.0f,   0, 1, // bottom left
+		 1.0f, -1.0f, 0.0f,	 0.0f, 1.0f, 0.0f,   1, 1, // bottom right
+		 1.0f,  1.0f, 0.0f,	 1.0f, 0.0f, 0.0f,   1, 0,  // top right
+		-1.0f,  1.0f, 0.0f,	 0.0f, 0.0f, 1.0f,   0, 0   // top left
 	};
 	unsigned int indices[6] = {
 		0,1,2, // first triangle
@@ -82,9 +92,10 @@ protected:
 	bool haveRoof(float x, float y);
 	void walls();
 	unsigned int loadTexture(std::string path, int imageType);
-	void renderMarioGrowing();
+	void renderFire(int right);
+	void initFire();
 	void renderGetCoin();
-	void initMarioTexture();
+	void initGetCoin();
 private:
 };
 
