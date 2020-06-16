@@ -20,7 +20,7 @@ private:
 	{
 		float x, y;
 	} question;
-	mat4 coinMatrix,fireMatrix;
+	mat4 coinMatrix,fireMatrix,endMatrix;
 
 	// textureID
 	GLuint m_Coin;
@@ -52,11 +52,11 @@ private:
 	GLuint GL_coinTimer,GL_fireTimer, GL_right;
 	GLuint GL_coinMatrix;
 	GLuint GL_fireMatrix;
-
+	GLuint GL_endTimer, GL_endMatrix,GL_endTranslateX, GL_endTranslateY;
 	// VAO, VBO, EBO
 	GLuint coinVAO, coinVBO, coinEBO;
 	GLuint fireVAO, fireVBO, fireEBO;
-	
+	GLuint endVAO, endVBO, endEBO;
 	float vertices[32] = { // (0,0)¦b¥ª¤W
 		// positions           // colors           // texture coords
 		-0.05f, -0.05f, 0.0f,  0.0f, 0.0f, 1.0f,   0, 1, // bottom left
@@ -65,6 +65,13 @@ private:
 		-0.05f,  0.1f, 0.0f,   0.0f, 0.0f, 1.0f,   0, 0   // top left
 	};
 	float fireVertices[32] = {
+		// positions         // colors           // texture coords
+		-1.0f, -1.0f, 0.0f,  0.0f, 0.0f, 1.0f,   0, 1, // bottom left
+		 1.0f, -1.0f, 0.0f,	 0.0f, 1.0f, 0.0f,   1, 1, // bottom right
+		 1.0f,  1.0f, 0.0f,	 1.0f, 0.0f, 0.0f,   1, 0,  // top right
+		-1.0f,  1.0f, 0.0f,	 0.0f, 0.0f, 1.0f,   0, 0   // top left
+	};
+	float endVertices[32] = {
 		// positions         // colors           // texture coords
 		-1.0f, -1.0f, 0.0f,  0.0f, 0.0f, 1.0f,   0, 1, // bottom left
 		 1.0f, -1.0f, 0.0f,	 0.0f, 1.0f, 0.0f,   1, 1, // bottom right

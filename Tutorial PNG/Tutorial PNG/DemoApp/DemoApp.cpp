@@ -32,7 +32,7 @@ bool LeftButtonDown = false;
 bool UpButtonDown = false;
 bool keyFirePress = false;
 
-GLuint program, program_fire;
+GLuint program, program_fire,program_end;
 unsigned int quadVAO, quadVBO;
 unsigned int framebuffer;
 unsigned int textureColorbuffer;
@@ -109,6 +109,41 @@ void DempApp::Initialize()
 	m_end3 = TextureApp::GenTexture("Media\\Texture\\win3.png");
 	initGetCoin();
 	initFire();
+	ShaderInfo shaders2[] = {
+		   { GL_VERTEX_SHADER, "end.vs" },//vertex shader
+		   { GL_FRAGMENT_SHADER, "end.fs" },//fragment shader
+		   { GL_NONE, NULL } };
+	program_end = LoadShaders(shaders2);//讀取shader
+	glUseProgram(program_end);//uniform參數數值前必須先use shader
+
+	// uniform value setting
+	GL_endTimer = glGetUniformLocation(program_end, "timer");
+	GL_endMatrix = glGetUniformLocation(program_end, "fireMatrix");
+	GL_endTranslateX = glGetUniformLocation(program_end, "translateX");
+	GL_endTranslateY = glGetUniformLocation(program_end, "translateY");
+
+	///////////////draw
+	glGenVertexArrays(1, &endVAO);
+	glGenBuffers(1, &endVBO);
+	glGenBuffers(1, &endEBO);
+
+	glBindVertexArray(endVAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, endVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(endVertices), endVertices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, endEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	// position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// texcoord attribute
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	glBindVertexArray(0);
+	glUseProgram(0);
 }
 
 
@@ -813,12 +848,42 @@ void DempApp::Display(bool auto_redraw)
 			else if (endingstep == 3)
 			{
 				endtimer++;
-				if (endtimer > 120)
+				if (endtimer > 120 && endtimer < 240)
 				{
+					glUseProgram(program_end);
+					// pass uniform value
+					glUniform1i(GL_endTimer, endtimer);
+					glUniformMatrix4fv(GL_endMatrix, 1, GL_FALSE, &endMatrix[0][0]);
+					glUniform1f(GL_endTranslateX, 0);
+					glUniform1f(GL_endTranslateY, 0);
+					// draw VAO
+					glBindVertexArray(endVAO);
+					glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+					// free binding
+					glBindVertexArray(0);
+					glUseProgram(0);
+				}
+				else if (endtimer>= 240)
+				{
+					glUseProgram(program_end);
+					// pass uniform value
+					glUniform1i(GL_endTimer, endtimer);
+					glUniformMatrix4fv(GL_endMatrix, 1, GL_FALSE, &endMatrix[0][0]);
+					glUniform1f(GL_endTranslateX, 0);
+					glUniform1f(GL_endTranslateY, 0);
+					// draw VAO
+					glBindVertexArray(endVAO);
+					glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+					// free binding
+					glBindVertexArray(0);
+					glUseProgram(0);
 					endingstep = 4;
 					//startGame = 3;
 					endtimer = 0;
 					gluLookAt(-screenmiddle, 0, 0, -screenmiddle, 0, -1, 0, 1, 0);
+					PlaySoundA(TEXT("Media\\Audio\\smb_world_clear.wav"), NULL, SND_FILENAME | SND_ASYNC);
 				}
 			}
 			else if (endingstep == 4)
@@ -861,7 +926,16 @@ void DempApp::Display(bool auto_redraw)
 				}
 				else
 				{
-					startGame = 3;
+					glPushMatrix();
+					glBindTexture(GL_TEXTURE_2D, m_end3);
+					glBegin(GL_QUADS);
+					glTexCoord2d(0, 0); glVertex2d(-1, -1);
+					glTexCoord2d(1, 0); glVertex2d(1, -1);
+					glTexCoord2d(1, 1); glVertex2d(1, 1);
+					glTexCoord2d(0, 1); glVertex2d(-1, 1);
+					glEnd();
+					glPopMatrix();
+					endtimer--;
 				}
 				if (endtimer == 0)
 				{
@@ -1004,6 +1078,10 @@ void DempApp::KeyPress(int key)
 			walkingDistanceY -= 0.01;
 			type = 1;
 		}
+		if (key == 'l')
+		{
+			
+		}
 	}
 }
 
@@ -1039,7 +1117,7 @@ void DempApp::KeyDown(int key)
 			if (inair == STANDING)
 			{
 				inair = RISING;
-				PlaySoundA(TEXT( "Media\\Audio\\smb_jump-small.wav"), NULL, SND_FILENAME | SND_ASYNC);
+				//PlaySoundA(TEXT( "Media\\Audio\\smb_jump-small.wav"), NULL, SND_FILENAME | SND_ASYNC);
 				UpButtonDown = true;
 			}
 		}
@@ -2515,6 +2593,8 @@ unsigned int DempApp::loadTexture(std::string path, int imageType)
 void DempApp::renderFire(int right)
 {
 	//fireMatrix = fireMatrix * translate(walkingDistanceX-screenmiddle ,0 , 0);
+
+
 	float  firePositionX=walkingDistanceX - screenmiddle;
 	if (right == 0)
 		firePositionX -= 0.08;
